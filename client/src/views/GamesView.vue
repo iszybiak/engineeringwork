@@ -1,4 +1,3 @@
-
 <template>
   <v-row justify="center">
     <v-dialog
@@ -137,8 +136,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    
   </v-row>
+  
+  
 </template>
+
 
 <script>
   export default {

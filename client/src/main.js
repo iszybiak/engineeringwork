@@ -13,5 +13,5 @@ new Vue({
   router,
   store,
   vuetify,
-  render: h => h(SignIn)
+  render: h => h(Admin)
 }).$mount('#app')
