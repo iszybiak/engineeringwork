@@ -7,6 +7,26 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const listItemRoutes = require('./routes/api/listItems.js')
 
+//TWILIO 
+const http = require('http')
+const MessagingResponse = require('twilio').twiml.MessagingResponse;
+
+app.post('/sms', (req , res) => {
+    const twiml = new MessagingResponse();
+
+    twiml.message.catch
+
+    twiml.message('Dziękuję za odpowiedź');
+    res.writeHead(200, {'Content-Type': 'text/xml'});
+    res.end(twiml.toString());
+});
+
+http.createServer(app).listen(1337, () => {
+    console.log('Express server listening on port 1337');
+})
+
+//
+
 
 app.use(cors())
 app.use(morgan('tiny'))
@@ -25,6 +45,10 @@ mongoose
 
 
 app.use('/api/listItems', listItemRoutes)
-app.get('/', (req, res) => res.send('Hello world'))
+app.get('/', (req, res) => {
+
+    res.send('hello')
+} )
 
 app.listen(PORT, () => console.log(`Aplikacja nasłuchuje na porcie http://localhost:${PORT}`))
+

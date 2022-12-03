@@ -57,7 +57,9 @@
           { title: 'Spotkania', icon: 'mdi-volleyball' , to:'/games' },
           { title: 'Uczestnicy', icon: 'mdi-account', to:'/users' },
           { title: 'Ranking', icon: 'mdi-format-list-numbered', to:'/ranking' },
+          { title: 'Prośby o dołączenie', icon: 'mdi-hand-back-left' },
           { title: 'Ustawienia', icon: 'mdi-cog'  },
+          { title: 'Wyloguj', icon: 'mdi-logout'  },
         ]
     }),
     }

@@ -8,10 +8,10 @@ router.get('/', async (req, res) => {
     try {
         const listItems = await ListItem.find() 
         if(!listItems) throw new Error('No listItem')
-        const sorted = listItems.sort((a,b) => {
+        /*const sorted = listItems.sort((a,b) => {
             return new Date(a.date).getTime() - new Date(b.date).getTime()
-        })
-        res.status(200).json(sorted)
+        })*/
+        res.status(200).json(listItems)
     } catch (error) {
         res.status(500).json({message: error.message})
     }
