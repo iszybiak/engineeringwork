@@ -43,6 +43,7 @@
                       readonly
                       v-bind="attrs"
                       v-on="on"
+
                     ></v-text-field>
                   </template>
 
@@ -74,13 +75,12 @@
         <v-row>
           <v-autocomplete
               v-model="friends"
-              :disabled="isUpdating"
-              :items="items"
+              :items = "items"
               filled
               chips
               label="Wybierz uczestników"
               item-text="name"
-              item-value="name"
+              item-value="email"
               multiple
             >
 
@@ -136,8 +136,7 @@
             text
             :disabled="loading"
             :loading="loading"
-            @click="dialog = false ; loading = true"
-            
+            @click="addItem"
           >
             DODAJ
           </v-btn>
@@ -165,10 +164,8 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    
-  
- 
 </v-container> 
+
 </template>
 
 
@@ -179,24 +176,42 @@ import axios from "axios";
     {
       return {
         items: [],
-        
-
+        dialog: false,
+        loading: false,
+        menu: false,
+        friends: [],
+        date: ""
       };
     },
-    data: () => ({
-     dialog: false,
-     loading: false
-    }),
     watch: {
       loading (val) {
         if (!val) return
-        setTimeout(() => (this.loading = false), 4000)
+        setTimeout(() => (this.loading = false), 2000)
       },
     },
 
     async mounted(){
       const response = await axios.get('api/listItems/')
       this.items = response.data;
-    }
+    }, 
+    // async moun(){
+    //   const res = await axios.get('api/listMeets/')
+    //   this.items = res.data;
+    // },
+    methods: {
+      async addItem(){ 
+      // this.loading = true 
+      console.log(this.friends)
+      const response = await axios.post('api/listMeets/', {
+          meeting_date: this.date,
+          friends: this.friends
+      });
+      this.items.push(response.data);
+      this.meeting_date = ""; 
+      this.friends = [];
+      this.dialog = false 
+      }
+    },
+    
   }
 </script>

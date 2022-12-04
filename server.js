@@ -6,6 +6,7 @@ const cors = require('cors')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const listItemRoutes = require('./routes/api/listItems.js')
+const listMeetRoutes = require('./routes/api/listMeets.js')
 
 //TWILIO 
 const http = require('http')
@@ -45,8 +46,8 @@ mongoose
 
 
 app.use('/api/listItems', listItemRoutes)
+app.use('/api/listMeets', listMeetRoutes)
 app.get('/', (req, res) => {
-
     res.send('hello')
 } )
 
