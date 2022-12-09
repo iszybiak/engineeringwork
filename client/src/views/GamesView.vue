@@ -122,7 +122,8 @@
           </v-container>
         </v-card-text>
 
-        <v-card-actions>
+        <v-card-actions
+        >
           <v-spacer></v-spacer>
           <v-btn
             color="blue darken-1"
@@ -144,6 +145,8 @@
         
       </v-card>
     </v-dialog>
+
+  <v-container> 
     <v-dialog
       v-model="loading"
       hide-overlay
@@ -163,15 +166,24 @@
           ></v-progress-linear>
         </v-card-text>
       </v-card>
-    </v-dialog>
+    </v-dialog> 
+  </v-container> 
+
+  <game-meet>
+  </game-meet>
+    
 </v-container> 
+
+
 
 </template>
 
 
 <script>
 import axios from "axios";
+import GameMeet from './gamesContainers/GameMeet.vue';
   export default {
+  components: { GameMeet },
     data ()
     {
       return {
@@ -183,33 +195,31 @@ import axios from "axios";
         date: ""
       };
     },
+
     watch: {
       loading (val) {
         if (!val) return
         setTimeout(() => (this.loading = false), 2000)
       },
     },
-
     async mounted(){
       const response = await axios.get('api/listItems/')
       this.items = response.data;
-    }, 
-    // async moun(){
-    //   const res = await axios.get('api/listMeets/')
-    //   this.items = res.data;
-    // },
+    },
+    
     methods: {
       async addItem(){ 
-      // this.loading = true 
-      console.log(this.friends)
-      const response = await axios.post('api/listMeets/', {
-          meeting_date: this.date,
-          friends: this.friends
-      });
-      this.items.push(response.data);
-      this.meeting_date = ""; 
-      this.friends = [];
-      this.dialog = false 
+        console.log(this.friends)
+        const response = await axios.post('api/listMeets/', {
+            meeting_date: this.date,
+            friends: this.friends
+        });
+        this.items.push(response.data);
+
+        this.meeting_date = ""; 
+        this.friends = [];
+        this.dialog = false 
+        this.loading =true
       }
     },
     
