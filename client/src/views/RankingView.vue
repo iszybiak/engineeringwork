@@ -5,7 +5,7 @@
 
     <v-list>
       <v-list-item
-        v-for="item in items"
+        v-for="item in filterData"
         :key="item._id"
       >
         <v-list-item-avatar>
@@ -42,6 +42,11 @@ import axios from "axios";
     async mounted(){
       const response = await axios.get('api/listItems/')
       this.items = response.data;
+    },
+    computed: {
+      filterData: function () {
+        return this.items.sort((a,b) => new Date(b.points) - new Date(a.points))
+      }
     }
   }
 </script>

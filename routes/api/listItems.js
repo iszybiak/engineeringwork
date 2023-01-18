@@ -1,13 +1,16 @@
 const { Router } = require('express')
 const ListItem = require('../../models/ListItem')
+const User = require("../../models/ListItem");
+const {hash, compare} = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require('dotenv').config()
 
-const router = Router() 
+const router = Router()
 
 //GET
 router.get('/', async (req, res) => {
     try {
-        const listItems = await ListItem.find() 
-        if(!listItems) throw new Error('No listItem')
+        const listItems = await ListItem.find()
         /*const sorted = listItems.sort((a,b) => {
             return new Date(a.date).getTime() - new Date(b.date).getTime()
         })*/
@@ -16,18 +19,65 @@ router.get('/', async (req, res) => {
         res.status(500).json({message: error.message})
     }
 })
-
-//POST
-router.post('/', async (req, res) => {
-    const newlistItem = new ListItem(req.body)
+//GET BY ID
+router.get('/:id', async (req, res) => {
+    const {id} = req.params
     try {
-        const listItem = await newlistItem.save()
-        if(!listItem) throw new Error("Coś poszło nie tak :(")
-        res.status(200).json(listItem)
+        const itemById = await ListItem.findById(id)
+        res.status(200).json(itemById)
     } catch (error) {
-        res.status(500).json({ message: error.message})
+        res.status(500).json({message : error.message})
     }
 })
+
+//POST
+router.post('/auth', async (req, res) => {
+    try{
+        const user = await User.findOne({email: req.body.email});
+        if(user){
+            return res.status(400).send("Użytkownik z podanym e-mailem już istnieje.");
+        }
+
+    }catch {
+        return res.status(400).send();
+    }
+    console.log("Co kolwiek " + req.body)
+    // create user
+    try{
+        const password = await hash(req.body.password, 10);
+        const user = new User( {
+            name: req.body.name,
+            surname: req.body.surname,
+            email: req.body.email,
+            password: password,
+            number : req.body.number
+        })
+        console.log(user)
+        await user.save();
+        res.status(201).send()
+    }catch {
+        res.status(422).send()
+    }
+})
+
+router.post('/sign', async (req, res) => {
+    const user = await User.findOne({email: req.body.email})
+
+    if(user == null){
+        return res.status(404).send("Adres e-mail lub hasło jest nieprawidłowe")
+    }
+        if(await compare(req.body.password, user.password)){
+            const accessToken = jwt.sign({
+                    email: req.body.email
+                },
+                process.env.ACCESS_TOKEN_SECRET);
+            res.status(200).json({
+                accessToken: accessToken
+            });
+        }else{
+            res.status(404).send("Adres e-mail lub hasło jest nieprawidłowe");
+        }
+});
 
 //PUT 
 router.put('/:id', async(req,res) => {
@@ -55,5 +105,7 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({message : error.message})
     }
 })
+
+
 
 module.exports = router

@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose')
 
-const ListItemSchema = new Schema({
+const User = new Schema({
         avatar: {
             type: String,
             default: "../client/src/assets/avatar.png",
@@ -32,10 +32,15 @@ const ListItemSchema = new Schema({
         number: {
             type: String,
             required: true,
-        }
+        },
+        role: {
+            type: String,
+            default: "ROLE_BASIC",
+        },
+
 
 
 })
 
-const ListItem = model('listItem', ListItemSchema)
+const ListItem = model('listItem', User)
 module.exports = ListItem //export to use the data in other files

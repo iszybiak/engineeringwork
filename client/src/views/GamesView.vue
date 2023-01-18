@@ -79,8 +79,7 @@
               filled
               chips
               label="Wybierz uczestników"
-              item-text="name"
-              item-value="email"
+              item-value="id"
               multiple
             >
 
@@ -167,11 +166,9 @@
         </v-card-text>
       </v-card>
     </v-dialog> 
-  </v-container> 
+  </v-container>
+    <game-list/>
 
-  <game-meet>
-  </game-meet>
-    
 </v-container> 
 
 
@@ -181,9 +178,9 @@
 
 <script>
 import axios from "axios";
-import GameMeet from './gamesContainers/GameMeet.vue';
+import GameList from "@/components/GameList.vue"
   export default {
-  components: { GameMeet },
+  components: { GameList },
     data ()
     {
       return {
@@ -215,6 +212,7 @@ import GameMeet from './gamesContainers/GameMeet.vue';
             friends: this.friends
         });
         this.items.push(response.data);
+        window.location.reload();
 
         this.meeting_date = ""; 
         this.friends = [];
