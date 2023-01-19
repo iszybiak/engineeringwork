@@ -9,11 +9,14 @@ const ListMeetSchema = new Schema({
             type: Date,
             required: true,
         },
-        friends: {
-            type: [String]
-        }
-
-
+        friends:[
+            {
+                type: String
+            },
+            {
+                type: Boolean,
+                default: false
+            }]
 })
 
 const ListMeet = model('listMeet', ListMeetSchema)

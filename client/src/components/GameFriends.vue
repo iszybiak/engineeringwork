@@ -2,7 +2,7 @@
   <v-expansion-panel-content
   >
     <v-row>
-      <v-col v-if="">
+      <v-col >
         {{data.name +" "+ data.surname}}
       </v-col>
       <v-col>

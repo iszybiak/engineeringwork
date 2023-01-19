@@ -7,6 +7,7 @@
       <v-list-item
         v-for="item in filterData"
         :key="item._id"
+        v-if="item.role == 'ROLE_USER' || item.role == 'ROLE_ADMIN'"
       >
         <v-list-item-avatar>
           <v-img :src="item.avatar"></v-img>

@@ -30,6 +30,18 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+router.get('/token', async (req, res) => {
+    const token = req.headers.authorization;
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(401);
+        res.json(user);
+    });
+})
+
+
+
+
 //POST
 router.post('/auth', async (req, res) => {
     try{
@@ -68,7 +80,8 @@ router.post('/sign', async (req, res) => {
     }
         if(await compare(req.body.password, user.password)){
             const accessToken = jwt.sign({
-                    email: req.body.email
+                    email: req.body.email,
+                    role: user.role
                 },
                 process.env.ACCESS_TOKEN_SECRET);
             res.status(200).json({

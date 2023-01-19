@@ -178,7 +178,9 @@
 
 <script>
 import axios from "axios";
-import GameList from "@/components/GameList.vue"
+import GameList from "@/components/GameList"
+//const sendEmail = require('@/../sendEmail');
+
   export default {
   components: { GameList },
     data ()
@@ -218,6 +220,11 @@ import GameList from "@/components/GameList.vue"
         this.friends = [];
         this.dialog = false 
         this.loading =true
+
+        // for (const elem of this.friends) {
+        //   //sendEmail(elem, this.meeting_date)
+        //
+        // }
       }
     },
     
