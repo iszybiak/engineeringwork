@@ -38,6 +38,10 @@
 import axios from "axios";
 import moment from 'moment'
 import GameFriends from "@/components/GameFriends.vue";
+import Cookies from "universal-cookie/es6";
+
+const cookies = new Cookies()
+const token = cookies.get("token")
 
 export default {
   components: {GameFriends},

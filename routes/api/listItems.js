@@ -53,7 +53,6 @@ router.post('/auth', async (req, res) => {
     }catch {
         return res.status(400).send();
     }
-    console.log("Co kolwiek " + req.body)
     // create user
     try{
         const password = await hash(req.body.password, 10);
@@ -85,7 +84,8 @@ router.post('/sign', async (req, res) => {
                 },
                 process.env.ACCESS_TOKEN_SECRET);
             res.status(200).json({
-                accessToken: accessToken
+                accessToken: accessToken,
+                role: user.role
             });
         }else{
             res.status(404).send("Adres e-mail lub hasło jest nieprawidłowe");

@@ -26,7 +26,7 @@
           :to="item.to"
           link
         >
-        
+
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -45,7 +45,9 @@
     </v-app-bar>
 
     <v-main>
-      <router-view></router-view>
+      <v-container>
+        <router-view></router-view>
+      </v-container>
     </v-main>
   </v-app>
 </template>

@@ -3,20 +3,18 @@ import VueRouter from 'vue-router'
 import GamesView from '../views/GamesView.vue'
 import UsersView from '../views/UsersView.vue'
 import HomeView from '../views/HomeView.vue'
-import LogIn from "@/components/LogIn.vue"
-import Registration from "@/components/Registration.vue"
-import SignIn from "@/SignIn.vue";
+import SignIn from "@/views/SignIn.vue";
 import RankingView from "@/views/RankingView.vue";
 import MyGamesView from "@/views/MyGamesView.vue";
 import RequestsToJoinView from "@/views/RequestsToJoinView.vue";
-//import RankingView from '../views/RankingView.vue'
+import Cookies from "universal-cookie/es6";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/signin',
-    name: 'signin',
+    path: '/sign',
+    name: 'sign',
     component: SignIn,
     meta: { requiresAuth: false }
   },
@@ -29,50 +27,58 @@ const routes = [
   {
     path: '/games',
     name: 'games',
-    component: GamesView 
+    component: GamesView,
+    meta: { requiresAuth: true, roles: ['ROLE_ADMIN'] }
   },
     //Admin, User
   {
     path: '/users',
     name: 'users',
-    component: UsersView
+    component: UsersView,
+    meta: { requiresAuth: true, roles: ['ROLE_USER', 'ROLE_ADMIN'] }
   },
     //Admin, User
   {
     path: '/ranking',
     name: 'ranking',
-    component: RankingView
+    component: RankingView,
+    meta: { requiresAuth: true, roles: ['ROLE_USER', 'ROLE_ADMIN'] }
   },
   {
     path: '/request',
     name: 'request',
     component: RequestsToJoinView,
-    meta: { requiresAuth: true, roles: ['ROLE_OWNER', 'ROLE_ADMIN'] }
+    meta: { requiresAuth: true, roles: ['ROLE_ADMIN'] }
   },
     //User
   {
     path: '/userGames',
     name: 'userGames',
     component: MyGamesView,
-    meta: { requiresAuth: true, roles: ['ROLE_OWNER', 'ROLE_ADMIN'] }
+    meta: { requiresAuth: true, roles: ['ROLE_USER', 'ROLE_ADMIN'] }
   },
 ]
 
-const router = new VueRouter({
-  routes
+
+const router =  new VueRouter({
+  routes: routes,
+  mode: 'history'
 })
 
-// router.beforeEach((to) => {
-//   const cookies = cookies.get("token")
-//   const role = ''
-//
-//
-//   if( to.meta.requiresAuth  && !to.meta.roles.includes(role) ){
-//     return{
-//       path: "/sign"
-//     }
-//   }
-// })
+
+router.beforeEach((to, from, next) => {
+  const cookies = new Cookies()
+  //const token = cookies.get("token")
+  const role = cookies.get("role")
+  console.log(role)
+  if(to.meta.requiresAuth  && !to.meta.roles.includes(role) ){
+    next({
+      name: 'sign'
+    })
+  }else{
+    next()
+  }
+})
 
 
 export default router

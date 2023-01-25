@@ -75,14 +75,17 @@
     </v-card-text>
   <div class="text-center mt-3 mb-10">
     <v-btn rounded color="blue accent-3" dark @click="logIn">ZALOGUJ</v-btn>
+
   </div>
   </v-col>
+
 </template>
 
 <script setup>
  import axios from "axios";
  import {ref} from "vue";
  import Cookies from "universal-cookie/es6";
+ import router from "vue-router";
 
  const email = ref('')
  const password = ref('')
@@ -94,10 +97,9 @@
      email: email.value,
      password: password.value
    });
-   console.log(response)
    if(response.status == 200){
      cookie.set("token", response.data.accessToken)
-
+     cookie.set("role", response.data.role)
    }
  }
 

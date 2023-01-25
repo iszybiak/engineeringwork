@@ -1,9 +1,6 @@
 const nodemailer = require('nodemailer');
-const e = require("express");
+ function sendEmail(email, date){
 
-
-
-module.exports = function sendEmail(email, date){
     const transporter = nodemailer.createTransport({
         service: 'hotmail',
         auth: {
@@ -25,5 +22,15 @@ module.exports = function sendEmail(email, date){
         }
         console.log("Send: " +info.response)
     })
+
 }
 
+// const friendsId = [1,2,3]
+// for (const elem of friendsId) {
+//     friends : {
+//         id: elem
+//     }
+//
+// }
+
+module.exports = { sendEmail, nodemailer }

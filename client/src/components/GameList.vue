@@ -25,6 +25,7 @@
           <GameFriends
               v-for="friend in meet.friends"
               :key="friend"
+              :meetId="meet._id"
               :friend="friend"
           >
           </GameFriends>

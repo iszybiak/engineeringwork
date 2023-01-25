@@ -72,10 +72,11 @@
           </v-menu>
         </v-row>
 
-        <v-row>
+        <v-row
+        >
           <v-autocomplete
-              v-model="friends"
-              :items = "items"
+              v-model="friendsID"
+              :items = "fData"
               filled
               chips
               label="Wybierz uczestników"
@@ -83,13 +84,16 @@
               multiple
             >
 
-              <template v-slot:selection="data">
+              <template v-slot:selection="data"
+
+              >
                 <v-chip
                   v-bind="data.attrs"
                   :input-value="data.selected"
                   close
                   @click="data.select"
                   @click:close="remove(data.item)"
+
                 >
                   <v-avatar left>
                     <v-img :src="data.item.avatar"></v-img>
@@ -98,9 +102,12 @@
                 </v-chip>
               </template>
 
-              <template v-slot:item="data">
-                <template v-if="typeof data.item !== 'object'">
-                <v-list-item-content v-text="data.item"></v-list-item-content>
+              <template v-slot:item="data"
+              >
+                <template v-if="typeof data.item !== 'object' ">
+                <v-list-item-content v-text="data.item"
+
+                >{{data.item}}</v-list-item-content>
                 </template>
                 <template v-else>
                   <v-list-item-avatar>
@@ -169,8 +176,7 @@
   </v-container>
     <game-list/>
 
-</v-container> 
-
+</v-container>
 
 
 </template>
@@ -179,7 +185,6 @@
 <script>
 import axios from "axios";
 import GameList from "@/components/GameList"
-//const sendEmail = require('@/../sendEmail');
 
   export default {
   components: { GameList },
@@ -190,7 +195,7 @@ import GameList from "@/components/GameList"
         dialog: false,
         loading: false,
         menu: false,
-        friends: [],
+        friendsID: [],
         date: ""
       };
     },
@@ -207,26 +212,43 @@ import GameList from "@/components/GameList"
     },
     
     methods: {
-      async addItem(){ 
-        console.log(this.friends)
+      async addItem(){
         const response = await axios.post('api/listMeets/', {
-            meeting_date: this.date,
-            friends: this.friends
-        });
-        this.items.push(response.data);
-        window.location.reload();
+          meeting_date: this.date,
+          friends: this.friendsID
+          });
+          this.items.push(response.data);
 
-        this.meeting_date = ""; 
-        this.friends = [];
-        this.dialog = false 
-        this.loading =true
+          for (const elem of this.friendsID) {
+            const res = await axios.post('api/listMeets/squad/', {
+              friendId: elem,
+              meetId: response.data._id
+            });
+            this.items.push(res.data);
+          }
+          window.location.reload();
+
+        // this.meeting_date = "";
+        // this.friends = [];
+        // this.dialog = false
+        // this.loading =true
 
         // for (const elem of this.friends) {
-        //   //sendEmail(elem, this.meeting_date)
+        //   sendEmail(elem, this.meeting_date)
         //
         // }
+      },
+      remove (item) {
+        const index = this.items.indexOf(item.id)
+        if (index >= 0) this.items.splice(index, 1)
+      },
+    },
+    computed: {
+      fData: function () {
+        return this.items.filter( el => { return el.role !== "ROLE_BASIC" } )
       }
     },
+
     
   }
 </script>
