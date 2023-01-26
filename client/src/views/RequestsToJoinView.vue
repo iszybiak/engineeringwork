@@ -2,16 +2,13 @@
   <v-card
       class="mx-auto"
   >
-
     <v-list>
       <v-list-item
           v-for="item in filterData"
           :key="item._id"
           v-if="item.role == 'ROLE_BASIC'"
       >
-        <v-list-item-avatar>
-          <v-img :src="item.avatar"></v-img>
-        </v-list-item-avatar>
+        <v-list-item-avatar></v-list-item-avatar>
 
         <v-list-item-content>
           <v-list-item-title >{{ item.name + " " + item.surname}}</v-list-item-title>
@@ -23,12 +20,6 @@
               @click="access(item._id)"
           > Przyjmij </v-btn>
         </v-list-item-content>
-
-        <v-list-item-action>
-          <v-btn icon>
-            <v-icon color="grey lighten-1">mdi-information</v-icon>
-          </v-btn>
-        </v-list-item-action>
       </v-list-item>
     </v-list>
   </v-card>
@@ -39,6 +30,7 @@ import axios from "axios";
 
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
+import router from "@/router";
 
 Vue.use(Vuetify)
 
@@ -66,7 +58,7 @@ export default {
       const res =  await axios.put('api/listItems/' + id , {
         role : 'ROLE_USER'
       });
-      this.items.push(res.data);
+      window.location.reload()
 
 
     }

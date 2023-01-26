@@ -37,7 +37,7 @@ router.put('/:id', async(req,res) => {
     const {id} = req.params
     try {
         const response = await ListMeet.findByIdAndUpdate(id, req.body)
-        const updated = { ... reponse._doc, ... req.body}
+        const updated = { ... response._doc, ... req.body}
         res.status(200).json(updated)
     } catch (error) {
         res.status(500).json({message : error.message})
@@ -78,7 +78,7 @@ router.get('/squad/', async (req, res) => {
 router.get('/squad/:meetID/:friendID', async (req, res) => {
     const { meetID, friendID} = req.params
     try {
-        const meetSquadById = await ListMeetSquad.findOne( {meetID, friendID})
+        const meetSquadById = await ListMeetSquad.findOne({meetId: meetID , friendId: friendID})
         res.status(200).json(meetSquadById)
     } catch (error) {
         res.status(500).json({message : error.message})
@@ -95,11 +95,11 @@ router.post('/squad/', async (req, res) => {
     }
 })
 
-router.put('/squad/:id', async(req,res) => {
-    const {id} = req.params
+router.put('/squad/:meetID/:friendID', async(req,res) => {
+    const { meetID, friendID} = req.params
     try {
-        const response = await ListMeetSquad.findByIdAndUpdate(id, req.body)
-        const updated = { ... reponse._doc, ... req.body}
+        const response = await ListMeetSquad.findOneAndUpdate({meetId: meetID , friendId: friendID}, req.body)
+        const updated = { ... response._doc, ... req.body}
         res.status(200).json(updated)
     } catch (error) {
         res.status(500).json({message : error.message})

@@ -110,11 +110,10 @@
           id="password"
           v-model="password"
           :rules="[rules.required, rules.min]"
-          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+          :append-icon="show1 ? 'visibility' : 'visibility_off'"
           label="Hasło"
           name="password"
-          prepend-icon="lock"
-          type="show1 ? 'text' : 'password'"
+          type="'password' : show1 ? 'text' : "
           color="blue accent-3"
           outlined
           clearable
@@ -216,18 +215,12 @@
           </v-fade-transition>
         </template>
       </v-text-field>
-      <template>
-        <v-file-input
-            label="Dodaj zdjęcie"
-            outlined
-            dense
-        ></v-file-input>
-      </template>
+
 
       <v-checkbox
           v-model="checkbox"
           :rules="[rules.statute]"
-          label="Akceptujesz regulamin?"
+          label="Aplikuj na organizatora"
           required
       ></v-checkbox>
     </v-form>
@@ -242,6 +235,7 @@
 
 <script >
 import axios from "axios";
+import router from "@/router";
 
 export default {
   computed: {
@@ -251,7 +245,7 @@ export default {
   },
   data: () => ({
     show1: false,
-    show2: true,
+    show2: false,
     valid: false,
     rules: {
       required: value => !!value || "Wymagane",
@@ -282,6 +276,7 @@ export default {
       }
       const r = await axios.post('api/listItems/auth', newUser);
       console.log(r)
+      window.location.reload()
     }
   },
 }

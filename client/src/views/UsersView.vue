@@ -2,38 +2,27 @@
   <v-card
     class="mx-auto"
   >
-
     <v-list>
-      <v-list-item
-        v-for="item in filterData"
-        :key="item._id"
-        v-if="item.role == 'ROLE_USER' || item.role == 'ROLE_ADMIN'"
-      >
-        <v-list-item-avatar>
-          <v-img :src="item.avatar"></v-img>
-        </v-list-item-avatar>
-        
-        <v-list-item-content>
-          <v-list-item-title >{{ item.name + " " + item.surname}}</v-list-item-title>
-        </v-list-item-content>
+        <UserItem
+            v-for="item in filterData"
+            :key="item._id"
+            :friend="item._id"></UserItem>
 
-        <v-list-item-action>
-          <v-btn icon>
-            <v-icon color="grey lighten-1">mdi-information</v-icon>
-          </v-btn>
-        </v-list-item-action>
-
-        
-      </v-list-item>
     </v-list>
   </v-card>
 </template>
 <script>
 import axios from "axios";
+import UserDetails from "@/components/UserDetails.vue";
+import UserItem from "@/components/UserItem.vue";
+
+
   export default {
+    components: {UserItem, UserDetails},
     data () {
       return {
         items: [],
+        dialog: false
       };
     },
     async mounted(){

@@ -9,9 +9,24 @@ const ListMeetSchema = new Schema({
             type: Date,
             required: true,
         },
+        place: {
+            type: String
+        },
+        price: {
+            type: Number,
+            default: 0
+        },
+        level: {
+            type: Number,
+            default: 1
+        },
         friends: {
             type: [String]
+        },
+        maker: {
+            type: String
         }
+
 })
 
 const ListMeet = model('listMeet', ListMeetSchema)

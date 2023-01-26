@@ -1,10 +1,6 @@
 const { Schema, model } = require('mongoose')
 
 const User = new Schema({
-        avatar: {
-            type: String,
-            default: "../client/src/assets/avatar.png",
-        },
         name: {
             type: String,
             required: true,

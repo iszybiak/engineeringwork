@@ -24,6 +24,7 @@
           v-for="item in items"
           :key="item.title"
           :to="item.to"
+          v-if="item.role.includes(currentRole)"
           link
         >
 
@@ -32,9 +33,18 @@
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title>{{ item.title}}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+
+
+        <v-list-item v-if="currentRole" @click="logOut">
+        <v-list-item-icon><v-icon>mdi-logout</v-icon></v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>Wyloguj</v-list-item-title>
+        </v-list-item-content>
+        </v-list-item>
+
       </v-list>
     </v-navigation-drawer>
 
@@ -53,17 +63,31 @@
 </template>
 
 <script>
-  export default {
-    data: () => ({ drawer: null,
+export default {
+  data: () => ({ drawer: null,
     items: [
-      { title: 'Spotkania', icon: 'mdi-volleyball' , to:'/games' },
-      { title: 'Moje spotkania', icon: 'mdi-volleyball' , to:'/userGames' },
-      { title: 'Uczestnicy', icon: 'mdi-account', to:'/users' },
-      { title: 'Ranking', icon: 'mdi-format-list-numbered', to:'/ranking' },
-      { title: 'Prośby o dołączenie', icon: 'mdi-hand-back-left', to:'/request' },
-      { title: 'Ustawienia', icon: 'mdi-cog'  },
-      { title: 'Wyloguj', icon: 'mdi-logout'  },
+      { title: 'Spotkania', icon: 'mdi-volleyball' , to:'/games', role:'ROLE_ADMIN' },
+      { title: 'Moje spotkania', icon: 'mdi-account-box' , to:'/userGames', role:['ROLE_USER' , 'ROLE_ADMIN']},
+      { title: 'Uczestnicy', icon: 'mdi-account-group', to:'/users', role:['ROLE_USER' , 'ROLE_ADMIN']},
+      { title: 'Ranking', icon: 'mdi-format-list-numbered', to:'/ranking', role:['ROLE_USER' , 'ROLE_ADMIN']},
+      { title: 'Prośby o dołączenie', icon: 'mdi-hand-back-left', to:'/request', role:'ROLE_ADMIN'  },
+     // { title: 'Ustawienia', icon: 'mdi-cog'  },
     ]
-    }),
-    }
+  }),
+}
+</script>
+
+<script setup>
+import Cookies from "universal-cookie/es6";
+import router from "@/router";
+const cookies = new Cookies()
+const currentRole = cookies.get("role")
+
+
+function logOut(){
+  cookies.remove("token")
+  cookies.remove("role")
+  router.push("/sign")
+  window.location.reload();
+}
 </script>

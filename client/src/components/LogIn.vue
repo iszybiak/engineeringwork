@@ -4,6 +4,7 @@
       <h1
           class="mb-10 text-center display-2 blue--text text--accent-3"
       >Logowanie</h1>
+
       <v-form>
         <v-text-field
             v-model="email"
@@ -71,7 +72,6 @@
           </template>
         </v-text-field>
       </v-form>
-      <small>Zapomniałeś hasła?</small>
     </v-card-text>
   <div class="text-center mt-3 mb-10">
     <v-btn rounded color="blue accent-3" dark @click="logIn">ZALOGUJ</v-btn>
@@ -85,21 +85,24 @@
  import axios from "axios";
  import {ref} from "vue";
  import Cookies from "universal-cookie/es6";
- import router from "vue-router";
+ import router from "@/router";
 
  const email = ref('')
  const password = ref('')
 
  const cookie = new Cookies()
-
  async function  logIn() {
+
    const response = await axios.post('api/listItems/sign', {
      email: email.value,
      password: password.value
    });
-   if(response.status == 200){
+   if(response.status == 200) {
      cookie.set("token", response.data.accessToken)
      cookie.set("role", response.data.role)
+     cookie.set("email", response.data.email)
+     await router.push("/")
+     window.location.reload();
    }
  }
 

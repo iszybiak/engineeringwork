@@ -14,6 +14,10 @@ const ListMeetSquadSchema = new Schema({
     arrived: {
         type: Number,
         default: 0
+    },
+    fee: {
+        type: Number,
+        default: 0
     }
 })
 

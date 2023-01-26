@@ -5,13 +5,12 @@
 
     <v-list>
       <v-list-item
-        v-for="item in filterData"
+        v-for="(item, index) in filterData"
         :key="item._id"
         v-if="item.role == 'ROLE_USER' || item.role == 'ROLE_ADMIN'"
+
       >
-        <v-list-item-avatar>
-          <v-img :src="item.avatar"></v-img>
-        </v-list-item-avatar>
+        <v-list-item-avatar>{{index+1}}</v-list-item-avatar>
         
         <v-list-item-content>
           <v-list-item-title >{{ item.name + " " + item.surname}}</v-list-item-title>
@@ -21,13 +20,6 @@
           <v-list-item-title >{{ item.points }}</v-list-item-title>
         </v-list-item-content>
 
-        <v-list-item-action>
-          <v-btn icon>
-            <v-icon color="grey lighten-1">mdi-information</v-icon>
-          </v-btn>
-        </v-list-item-action>
-
-        
       </v-list-item>
     </v-list>
   </v-card>

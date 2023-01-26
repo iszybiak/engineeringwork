@@ -3,6 +3,7 @@ const ListItem = require('../../models/ListItem')
 const User = require("../../models/ListItem");
 const {hash, compare} = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const {getLogger} = require("nodemailer/lib/shared");
 require('dotenv').config()
 
 const router = Router()
@@ -24,6 +25,15 @@ router.get('/:id', async (req, res) => {
     const {id} = req.params
     try {
         const itemById = await ListItem.findById(id)
+        res.status(200).json(itemById)
+    } catch (error) {
+        res.status(500).json({message : error.message})
+    }
+})
+router.get('/email/:email', async (req, res) => {
+    const {email} = req.params
+    try {
+        const itemById = await ListItem.findOne( {email: email})
         res.status(200).json(itemById)
     } catch (error) {
         res.status(500).json({message : error.message})
@@ -75,6 +85,7 @@ router.post('/sign', async (req, res) => {
     const user = await User.findOne({email: req.body.email})
 
     if(user == null){
+        console.log("Błąd")
         return res.status(404).send("Adres e-mail lub hasło jest nieprawidłowe")
     }
         if(await compare(req.body.password, user.password)){
@@ -85,7 +96,8 @@ router.post('/sign', async (req, res) => {
                 process.env.ACCESS_TOKEN_SECRET);
             res.status(200).json({
                 accessToken: accessToken,
-                role: user.role
+                role: user.role,
+                email: user.email
             });
         }else{
             res.status(404).send("Adres e-mail lub hasło jest nieprawidłowe");
