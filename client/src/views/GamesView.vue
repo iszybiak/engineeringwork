@@ -28,10 +28,8 @@
             <v-row>
               <v-col>
                 <v-menu
-                  ref="menu"
                   v-model="menu"
                   :close-on-content-click="false"
-                  :return-value.sync="date"
                   transition="scale-transition"
                   offset-y
                   min-width="auto"
@@ -51,24 +49,10 @@
 
           <v-date-picker
                 v-model="date"
-                no-title
-                scrollable
+                :rules="[rules.required]"
+                :min="nowDate"
+                @input="menu = false"
               >
-                <v-spacer></v-spacer>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="menu = false"
-                >
-                  Anuluj
-                </v-btn>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.menu.save(date)"
-                >
-                  OK
-                </v-btn>
           </v-date-picker>
           </v-menu>
               </v-col>
@@ -95,6 +79,7 @@
                   </template>
                   <v-time-picker
                       v-if="modal2"
+                      :rules="[rules.required]"
                       v-model="time"
                       format="24hr"
                       full-width
@@ -121,12 +106,16 @@
         <v-row>
           <v-col>
             <v-text-field
+                v-model="place"
+                :rules="[rules.required]"
                 label="Miejsce"
             ></v-text-field>
           </v-col>
           <v-col>
             <v-select
                 :items="level"
+                v-model="level"
+                item-value="value"
                 label="Poziom"
             ></v-select>
           </v-col>
@@ -134,8 +123,9 @@
               max-width="30%">
             <v-text-field
             label="Cena"
+            v-model="price"
             type="number"
-            value="10"
+            value="0"
             suffix="zł"
             ></v-text-field>
 
@@ -147,6 +137,7 @@
           <v-col>
           <v-autocomplete
               v-model="friendsID"
+              :rules="[rules.required]"
               :items = "fData"
               chips
               label="Wybierz uczestników"
@@ -208,7 +199,7 @@
             text
             @click="addItem"
           >
-            DODAJ
+            UTWÓRZ
           </v-btn>
         </v-card-actions>
         
@@ -237,10 +228,13 @@ console.log(currentEmail)
       return {
         items: [],
         dialog: false,
+        nowDate: new Date().toISOString().slice(0,10),
         menu: false,
         friendsID: [],
         date: "",
         time: "",
+        place: "",
+        price: 0,
         menu2: false,
         modal2: false,
         level: [
@@ -249,6 +243,9 @@ console.log(currentEmail)
           { text: 'B - Średnio-zaawansowany', value: 3 },
           { text: 'A - Zaawansowany', value: 4 },
         ],
+        rules: {
+          required: value => !!value || "Wymagane"
+        }
       };
     },
 
@@ -256,32 +253,45 @@ console.log(currentEmail)
       const response = await axios.get('api/listItems/')
       this.items = response.data;
     },
+
     methods: {
       async addItem(){
         const response = await axios.post('api/listMeets/', {
           meeting_date: this.date + "T" + this.time,
+          place: this.place,
+          price: this.price,
+          level: this.level,
           friends: this.friendsID,
-          maker: currentEmail
+          maker: currentEmail,
           });
-          this.items.push(response.data);
-
-          for (const elem of this.friendsID) {
-            const res = await axios.post('api/listMeets/squad/', {
+        console.log("fiendsID " + response.data.friends)
+        let checkFriends;
+        if(response.status == 200) {
+          for (const elem of response.data.friends) {
+            await axios.post('api/listMeets/squad/', {
               friendId: elem,
               meetId: response.data._id,
             });
-            this.items.push(res.data);
+
+            checkFriends = this.items.filter((item) => item._id == elem )
+            await axios.post('api/listMeets/email-send', {
+                   to: checkFriends[0].email,
+                   subject: "Siatkówka - "+this.date+" - godz. - "+this.time+" - "+this.place,
+                   text: "Cześć ! Zapraszam Cię do wspólnej gry "+this.date+" o godzinie "+
+                       this.time+". Miejsce - "+this.place +
+                       "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/#/"
+            });
+            await axios.post('api/listMeets/sendsms', {
+              phoneNumber: checkFriends[0].number,
+              text: "Cześć"+checkFriends[0].name +"! Zapraszam Cię do wspólnej gry "+this.date+" o godzinie "+
+                  this.time+". Miejsce - "+this.place +
+                  "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/#/"
+            });
+
+
           }
           window.location.reload();
-
-        // this.meeting_date = "";
-        // this.friends = [];
-        // this.dialog = false
-
-        // for (const elem of this.friends) {
-        //   sendEmail(elem, this.meeting_date)
-        //
-        // }
+       }
       },
       remove (item) {
         const index = this.items.indexOf(item.id)

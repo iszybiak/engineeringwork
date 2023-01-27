@@ -42,10 +42,10 @@
                 </v-icon>
               </v-btn>
             </template>
-            <GameEdit
+            <GameEditFriends
                 :meetId="meetId"
                 :friend="friend"
-            ></GameEdit>
+            ></GameEditFriends>
             <v-btn
                 color="green darken-2"
                 text
@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import GameEdit from "@/components/GameEdit.vue";
+import GameEditFriends from "@/components/GameEditFriends.vue";
 import axios from "axios";
 import {onMounted, ref} from "vue";
 

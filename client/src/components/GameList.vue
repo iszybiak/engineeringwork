@@ -9,7 +9,6 @@
         >
 
           <v-expansion-panel-header class="title">
-
               <span>
                 <v-icon color="blue">mdi-account-group</v-icon>
                 Spotkanie
@@ -21,7 +20,6 @@
                   $expand
                 </v-icon>
               </template>
-
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-row class="tab-header">
@@ -40,8 +38,51 @@
               :friend="friend"
           >
           </GameFriends>
+          <v-divider></v-divider>
+          <v-expansion-panel-content  v-if="meet.meeting_date > currentDate">
+            <v-row class="buttons">
+              <v-spacer></v-spacer>
+                <v-dialog
+                    v-model="dialog"
+                    persistent
+                >
+                  <template v-slot:activator="{ on, attrs }"
+                  >
+                    <v-spacer></v-spacer>
+                <v-btn
+                    color="cyan" dark
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  Przenieś
+                </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-title>
+                      <span class="text-h5">Przenieś spotkanie
+                        {{format_date(meet.meeting_date) }} godz. {{format_time(meet.meeting_date)}}
+                      </span>
+                      <v-spacer></v-spacer>
+                      <v-btn icon @click="dialog = false" >
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
+                    </v-card-title>
+                  <GameMove :meetId="meet._id"/>
+                  </v-card>
+                </v-dialog>
 
+                <v-spacer></v-spacer>
+                <v-btn
+                    color="primary" dark
+                    id="btn"
+                    @click="cancel(meet._id)"
+                >
+                  Odwołaj
+                </v-btn>
+            </v-row>
+          </v-expansion-panel-content>
         </v-expansion-panel>
+
       </v-expansion-panels>
     </v-row>
   </v-container>
@@ -52,12 +93,13 @@
 import axios from "axios";
 import moment from 'moment'
 import GameFriends from "@/components/GameFriends.vue";
-import GameEdit from "@/components/GameEdit.vue";
+import GameEdit from "@/components/GameEditFriends.vue";
 import Cookies from "universal-cookie/es6";
+import GameMove from "@/components/GameMove.vue";
 
 const cookies = new Cookies()
 export default {
-  components: {GameEdit, GameFriends},
+  components: {GameMove, GameEdit, GameFriends},
   data ()
   {
     return {
@@ -65,7 +107,8 @@ export default {
       item: '',
       show: false,
       dialog:false,
-      currentEmail: cookies.get("email")
+      currentEmail: cookies.get("email"),
+      currentDate: new Date().toISOString()
 
     };
   },
@@ -84,6 +127,10 @@ export default {
         return moment(String(value)).format('HH:mm')
       }
     },
+    cancel(id){
+      console.log("cancel" + id)
+
+    }
   },
   computed: {
     filterData: function () {
@@ -109,5 +156,7 @@ export default {
   max-width: 5%;
   padding: 0;
 }
-
+.buttons {
+  padding-top: 15px ;
+}
 </style>

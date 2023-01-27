@@ -110,10 +110,10 @@
           id="password"
           v-model="password"
           :rules="[rules.required, rules.min]"
-          :append-icon="show1 ? 'visibility' : 'visibility_off'"
+          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
           label="Hasło"
           name="password"
-          type="'password' : show1 ? 'text' : "
+          :type="show1 ? 'text' :'password' "
           color="blue accent-3"
           outlined
           clearable
@@ -150,9 +150,8 @@
           name="passwordReepet"
           :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
           prepend-icon="lock"
-          type="show2 ? 'text' : 'password'"
+          :type="show2 ? 'text' : 'password'"
           color="blue accent-3"
-          v-model="passwordReepet"
           outlined
           clearable
           @click:append="show2 = !show2"
@@ -274,22 +273,28 @@ export default {
       password: this.password,
       number : this.phoneNumber
       }
+
       const r = await axios.post('api/listItems/auth', newUser);
       console.log(r)
-      window.location.reload()
+      if(r.status == 200) {
+        await router.push("/")
+        window.location.reload();
+      }if(r.status == 400){
+
+      }
     }
   },
 }
 
-//const personalData = reactive({
+// const personalData = reactive({
 //  email: {value:'', valid:true},
 //  password: {value:'', valid:true},
 //  pesel: {value:'', valid:true},
 //  phoneNumber: {value:'', valid:true},
-//})
-//const checkIfValid = computed(() => checkValid(personalData))
+// })
+// const checkIfValid = computed(() => checkValid(personalData))
 //
-//const submit = () => {
+// const submit = () => {
 //  const data = {
 //    email: personalData.email.value,
 //    password: personalData.password.value,
@@ -298,6 +303,6 @@ export default {
 //  }
 //
 //  register(data)
-//}
+// }
 
 </script>

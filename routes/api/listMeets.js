@@ -1,7 +1,13 @@
 const { Router } = require('express')
 const ListMeet = require('../../models/ListMeet')
 const ListMeetSquad = require('../../models/ListMeetSquad')
-const ListItem = require("../../models/ListItem");
+const nodemailer = require("nodemailer");
+const twilio = require('twilio');
+const accountSid = "ACf4ac85668cab96748db5aaada279d283";
+const authToken = "7f72055f461fb0d92d1ead89c52f1ce0";
+const client = new twilio(accountSid, authToken);
+const Nexmo = require('nexmo');
+
 
 const router = Router() 
 
@@ -10,12 +16,19 @@ router.get('/', async (req, res) => {
     try {
         const listMeets = await ListMeet.find() 
         if(!listMeets) throw new Error('No listMeets')
-        /*const sorted = listMeets.sort((a,b) => {
-            return new Date(a.date).getTime() - new Date(b.date).getTime()
-        })*/
         res.status(200).json(listMeets)
     } catch (error) {
         res.status(500).json({message: error.message})
+    }
+})
+
+router.get('/:id', async(req,res) => {
+    const {id} = req.params
+    try {
+        const response = await ListMeet.findById(id)
+        res.status(200).json(response)
+    } catch (error) {
+        res.status(500).json({message : error.message})
     }
 })
 
@@ -57,18 +70,12 @@ router.delete('/:id', async (req, res) => {
     }
 })
 
-
-
-
-
-
 ///SQUAD
 
-router.get('/squad/', async (req, res) => {
+router.get('/squad/:meetID', async (req, res) => {
+    const {meetID} = req.params
     try {
-        const listMeetsSquad = await ListMeetSquad.find()
-        if(!listMeetsSquad) throw new Error('No listMeets')
-
+        const listMeetsSquad = await ListMeetSquad.find({meetId: meetID})
         res.status(200).json(listMeetsSquad)
     } catch (error) {
         res.status(500).json({message: error.message})
@@ -84,6 +91,7 @@ router.get('/squad/:meetID/:friendID', async (req, res) => {
         res.status(500).json({message : error.message})
     }
 })
+
 //POST
 router.post('/squad/', async (req, res) => {
     const newlistMeetSquad = new ListMeetSquad(req.body)
@@ -105,6 +113,19 @@ router.put('/squad/:meetID/:friendID', async(req,res) => {
         res.status(500).json({message : error.message})
     }
 })
+router.put('/squad/:meetID', async(req,res) => {
+    const { meetID} = req.params
+    try {
+        const response = await ListMeetSquad.find({meetId: meetID })
+        for(let elem of response){
+            elem.confirm = 0
+            await elem.save()
+        }
+        res.status(200).json(response)
+    } catch (error) {
+        res.status(500).json({message : error.message})
+    }
+})
 
 
 //DELETE
@@ -118,6 +139,71 @@ router.delete('/squad/:id', async (req, res) => {
         res.status(500).json({message : error.message})
     }
 })
+
+
+//EMAIL SEND
+router.post('/email-send', (req, res) => {
+    const transporter = nodemailer.createTransport({
+        service: 'hotmail',
+        auth: {
+            user: 'volleyball_Team@outlook.com',
+            pass: 'v!TeaM23.'
+        }
+    });
+
+    const mailOptions = {
+        from: 'volleyball_Team@outlook.com',
+        to: req.body.to, // recipient email address
+        subject: req.body.subject,
+        text: req.body.text
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            res.status(500).send(error);
+        } else {
+            res.send('Email sent: ' + info.response);
+        }
+
+    });
+});
+
+//SMS SEND
+router.post('/sendsms', (req, res) => {
+    const { phoneNumber, message } = req.body;
+    client.messages
+        .create({
+            body: message,
+            from: '+13855264981',
+            to: phoneNumber
+        })
+        .then(() => {
+            res.send('SMS sent successfully');
+        })
+        .catch(err => {
+            res.status(500).send(err);
+        });
+});
+
+const nexmo = new Nexmo({
+    apiKey: 'f6d75c02',
+    apiSecret: 'XzZXWsDv92dg1mEP'
+});
+router.post('/sms', (req, res) => {
+    const { to, message } = req.body;
+    nexmo.message.sendSms(
+        '+48533654751', to, message,
+        (err, responseData) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.dir(responseData);
+                // Optional: send response to client
+                res.send(responseData)
+            }
+        }
+    );
+});
 
 
 

@@ -82,12 +82,24 @@ async function save() {
     arrived: chosenArrived.value,
     fee: chosenFee.value
   });
+
+  let newPoints = data.value.points
+  console.log("start" + newPoints)
+
+  if(data.value.confirm === 0){
+    newPoints = newPoints - 1
+  } if(data.value.confirm === 1 && chosenArrived.value == '2'){
+    newPoints = newPoints -2
+  } if(chosenArrived.value == '1'){
+    newPoints = newPoints + 2
+  }
+  const response =  await axios.put('api/listItems/' + props.friend, {
+      points: newPoints
+  });
+
   window.location.reload();
-  this.data.push(res.data);
-
+  this.data.push(res.data, response.data);
 }
-
-
 </script>
 <script>
 export default {
