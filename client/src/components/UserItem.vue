@@ -1,5 +1,5 @@
 <template>
-  <v-list-item>
+  <v-list-item v-if="data.role == 'ROLE_USER' || data.role == 'ROLE_ADMIN'">
   <v-list-item-avatar></v-list-item-avatar>
   <v-list-item-content>
     <v-list-item-title >{{ data.name + " " + data.surname}}</v-list-item-title>

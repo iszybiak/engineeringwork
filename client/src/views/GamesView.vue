@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container >
     <v-dialog
       v-model="dialog"
       persistent
@@ -175,15 +175,11 @@
                   </v-list-item-content>
                 </template>
               </template>
-
             </v-autocomplete>
-
           </v-col>
         </v-row>
-              
           </v-container>
         </v-card-text>
-
         <v-card-actions
         >
           <v-spacer></v-spacer>
@@ -202,14 +198,10 @@
             UTWÓRZ
           </v-btn>
         </v-card-actions>
-        
       </v-card>
     </v-dialog>
     <game-list/>
-
 </v-container>
-
-
 </template>
 
 
@@ -264,7 +256,6 @@ console.log(currentEmail)
           friends: this.friendsID,
           maker: currentEmail,
           });
-        console.log("fiendsID " + response.data.friends)
         let checkFriends;
         if(response.status == 200) {
           for (const elem of response.data.friends) {
@@ -272,25 +263,28 @@ console.log(currentEmail)
               friendId: elem,
               meetId: response.data._id,
             });
-
-            checkFriends = this.items.filter((item) => item._id == elem )
-            await axios.post('api/listMeets/email-send', {
-                   to: checkFriends[0].email,
-                   subject: "Siatkówka - "+this.date+" - godz. - "+this.time+" - "+this.place,
-                   text: "Cześć ! Zapraszam Cię do wspólnej gry "+this.date+" o godzinie "+
-                       this.time+". Miejsce - "+this.place +
-                       "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/#/"
-            });
-            await axios.post('api/listMeets/sendsms', {
-              phoneNumber: checkFriends[0].number,
-              text: "Cześć"+checkFriends[0].name +"! Zapraszam Cię do wspólnej gry "+this.date+" o godzinie "+
-                  this.time+". Miejsce - "+this.place +
-                  "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/#/"
-            });
-
-
           }
-          window.location.reload();
+          for (const elem of response.data.friends) {
+
+            console.log("Siatkówka - "+this.date+" - godz. - "+this.time+" - "+this.place )
+
+            checkFriends = this.items.filter((item) => item._id == elem)
+            console.log(checkFriends[0].email + "  ---- " + checkFriends[0].number )
+            await axios.post('api/listMeets/email-send', {
+               to: checkFriends[0].email,
+               subject: "Siatkówka - "+this.date+" - godz. - "+this.time+" - "+this.place,
+               text: "Cześć ! Zapraszam Cię do wspólnej gry "+this.date+" o godzinie "+
+                   this.time+". Miejsce - "+this.place +
+                   "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/#/userGames"
+            });
+            // await axios.post('api/listMeets/sms', {
+            //   to: checkFriends[0].number,
+            //   text: "Cześć "+checkFriends[0].name +" ! Zapraszam Cię do wspólnej gry "+this.date+" o godzinie "+
+            //       this.time+". Miejsce - "+this.place +
+            //       "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/#/"
+            // });
+          }
+          //window.location.reload();
        }
       },
       remove (item) {

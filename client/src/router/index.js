@@ -6,8 +6,10 @@ import HomeView from '../views/HomeView.vue'
 import SignIn from "@/views/SignIn.vue";
 import RankingView from "@/views/RankingView.vue";
 import MyGamesView from "@/views/MyGamesView.vue";
+import SettingsView from "@/views/SettingsView.vue";
 import RequestsToJoinView from "@/views/RequestsToJoinView.vue";
 import Cookies from "universal-cookie/es6";
+import Admin from "@/components/Admin.vue";
 
 Vue.use(VueRouter)
 
@@ -22,7 +24,7 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView,
-    meta: { requiresAuth: true, roles: ['ROLE_BASIC', 'ROLE_USER', 'ROLE_ADMIN'] }
+    meta: { requiresAuth: true, roles: ['ROLE_BASIC', 'ROLE_USER', 'ROLE_ADMIN', "ROLE_HEAD_ADMIN"] }
   },
   {
     path: '/games',
@@ -57,6 +59,18 @@ const routes = [
     component: MyGamesView,
     meta: { requiresAuth: true, roles: ['ROLE_USER', 'ROLE_ADMIN'] }
   },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: SettingsView,
+    meta: { requiresAuth: true, roles: ['ROLE_USER'] }
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: Admin,
+    meta: { requiresAuth: true, roles: ['ROLE_HEAD_ADMIN'] }
+  }
 ]
 
 

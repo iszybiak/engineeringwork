@@ -6,7 +6,7 @@
         {{data.name +" "+ data.surname}}
       </v-col>
       <v-col>
-        <p v-if="data2.confirm === 0" class="gray">Nie potwierdzono</p>
+        <p v-if="data2.confirm === 0" class="gray clickable" @click="send(data.email)"></p>
         <p v-if="data2.confirm === 1" class="green-text">Będzie</p>
         <p v-if="data2.confirm === 2" class="red-text">Nie będzie</p>
       </v-col>
@@ -76,6 +76,7 @@ const props = defineProps({
 
 const data = ref('')
 const data2 = ref('')
+const dataMeet = ref('')
 
 onMounted(async () => {
   const response =  await axios.get('api/listItems/' + props.friend );
@@ -85,6 +86,14 @@ onMounted(async () => {
   data2.value = res.data;
 })
 
+async function send(email) {
+  await axios.post('api/listMeets/email-send', {
+    to: email,
+    subject: "Przypomnienie o spotkaniu ",
+    text: "Nie poinformowałeś ogranizatorów o swojej obecności na spotkaniu. " +
+        "Zrób to jak najszybciej! http://localhost:8080/#/userGames"
+  });
+}
 </script>
 <script>
 export default {
@@ -111,5 +120,29 @@ export default {
   max-width: 5%;
   padding: 0;
 }
+
+.clickable{
+  cursor: pointer;
+  position: relative;
+}
+.clickable::before{
+  content:'Nie potwierdzono';
+  position: absolute;
+}
+.clickable::after{
+  content:'Wyślij przypomnienie';
+  color: rgba(253,68,229,0);
+  position: absolute;
+}
+.clickable:hover::before {
+  top: -60px;
+  color: rgba(253,68,229,0);
+}
+.clickable:hover::after {
+  top: 0;
+  color: dodgerblue;
+  font-weight: bold;
+}
+
 
 </style>

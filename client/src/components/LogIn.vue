@@ -103,6 +103,8 @@
      cookie.set("email", response.data.email)
      await router.push("/")
      window.location.reload();
+   }else{
+     console.error("Niepoprawne hasło lub email")
    }
  }
 

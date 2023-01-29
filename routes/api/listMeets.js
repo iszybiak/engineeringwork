@@ -56,6 +56,19 @@ router.put('/:id', async(req,res) => {
         res.status(500).json({message : error.message})
     }
 })
+router.put('/friends/:id', async(req,res) => {
+    ListMeet.findById(req.params.id, (err, meet) => {
+        if(err) return res.status(500).send(err);
+        if(!meet) return res.status(404).send("Meet not found.");
+        meet.friends.push(req.body.friends);
+        meet.save((err) => {
+            if(err) return res.status(500).send(err);
+            // Send response to client
+            res.send("New friend added to meet.");
+        });
+    });
+})
+
 
 
 //DELETE
@@ -190,16 +203,16 @@ const nexmo = new Nexmo({
     apiSecret: 'XzZXWsDv92dg1mEP'
 });
 router.post('/sms', (req, res) => {
-    const { to, message } = req.body;
+    const to = req.body.to;
+    const text = req.body.text;
+
     nexmo.message.sendSms(
-        '+48533654751', to, message,
+        'Vonage APIs', to, text, { type: 'unicode' },
         (err, responseData) => {
-            if (err) {
-                console.log(err);
+            if(err) {
+                res.send(err);
             } else {
-                console.dir(responseData);
-                // Optional: send response to client
-                res.send(responseData)
+                res.send(responseData);
             }
         }
     );

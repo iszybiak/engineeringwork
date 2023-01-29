@@ -14,14 +14,16 @@
         <h1 class="display-2 font-weight-bold mb-3">
           Witaj w aplikacji V-Team
         </h1>
-
-        <p class="subheading font-weight-regular" v-if="currentRole == 'ROLE_ADMIN'">
-          Jako administrator możesz zarządzać spotkaniami oraz graczami
+        <p class="subheading font-weight-regular" v-if="currentRole === 'ROLE_HEAD_ADMIN'">
+          Jako administrator główny możesz zarządzać organizatorami
         </p>
-        <p class="subheading font-weight-regular" v-if="currentRole == 'ROLE_USER'">
+        <p class="subheading font-weight-regular" v-if="currentRole === 'ROLE_ADMIN'">
+          Jako organizator możesz zarządzać spotkaniami oraz graczami
+        </p>
+        <p class="subheading font-weight-regular" v-if="currentRole === 'ROLE_USER'">
           Przymij zaproszenie i graj!
         </p>
-        <p class="subheading font-weight-regular" v-if="currentRole == 'ROLE_BASIC'">
+        <p class="subheading font-weight-regular" v-if="currentRole === 'ROLE_BASIC'">
           Oczekujesz na akceptację przez organizatora
         </p>
       </v-col>

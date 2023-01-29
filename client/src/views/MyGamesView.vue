@@ -6,7 +6,7 @@
         <v-list-item
             v-for="meet in filterData"
             :key="meet._id"
-            v-if="meet.friends.includes(item._id)"
+            v-if="meet.friends.includes(item._id) "
         >
           <v-list-item-avatar><v-icon color="blue">mdi-account-group</v-icon> </v-list-item-avatar>
           <v-list-item-content>
@@ -16,8 +16,20 @@
               <b>{{format_date(meet.meeting_date) }}</b> godz. <b>{{format_time(meet.meeting_date)}}</b>
               </span>
             </v-list-item-title>
+            <v-list-item-subtitle v-if="meet.level === 1">
+              {{meet.place}} | {{meet.price}} zł | Amatorski
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-if="meet.level === 2">
+              {{meet.place}} | {{meet.price}} zł | Rekreacyjny
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-if="meet.level === 3">
+            {{meet.place}} | {{meet.price}} zł | Średnio-zaawansowany
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-if="meet.level === 4">
+              {{meet.place}} | {{meet.price}} zł | Zaawansowany
+            </v-list-item-subtitle>
             </v-list-item-content>
-          <v-list-item-content class="button" >
+          <v-list-item-content class="button">
                 <v-btn
                     color="cyan" dark
                     max-width="150"
@@ -31,6 +43,7 @@
                     @click="dismiss(meet._id, item._id)"
                 > Odrzuć </v-btn>
           </v-list-item-content>
+
         </v-list-item>
       </v-list>
   </v-card>
@@ -51,6 +64,7 @@ export default {
   {
     return {
       itemsMeet: [],
+      itemSquad: "",
       item: [],
       show: false
 
@@ -63,8 +77,8 @@ export default {
     const response = await axios.get('api/listItems/email/' + currentEmail)
     this.item = response.data;
 
-    // const response2 = await axios.get('api/listMeets/squad/' + this.meet._id + "/" + this.item._id)
-    // this.itemSquad = response2.data;
+    const response2 = await axios.get('api/listMeets/squad/' + this.meet._id + "/" + this.item._id)
+    this.itemSquad = response2.data;
 
   },
   methods: {
@@ -94,7 +108,7 @@ export default {
   computed: {
     filterData: function () {
       return this.itemsMeet.sort((a,b) => new Date(b.meeting_date) - new Date(a.meeting_date))
-    }
+    },
   }
 }
 </script>

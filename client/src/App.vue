@@ -71,7 +71,8 @@ export default {
       { title: 'Uczestnicy', icon: 'mdi-account-group', to:'/users', role:['ROLE_USER' , 'ROLE_ADMIN']},
       { title: 'Ranking', icon: 'mdi-format-list-numbered', to:'/ranking', role:['ROLE_USER' , 'ROLE_ADMIN']},
       { title: 'Prośby o dołączenie', icon: 'mdi-hand-back-left', to:'/request', role:'ROLE_ADMIN'  },
-     // { title: 'Ustawienia', icon: 'mdi-cog'  },
+      { title: 'Uczestnicy', icon: 'mdi-account-group', to:'/admin', role:'ROLE_HEAD_ADMIN'  },
+      { title: 'Ustawienia', icon: 'mdi-cog', to:'/settings', role:'ROLE_USER' },
     ]
   }),
 }
@@ -87,6 +88,7 @@ const currentRole = cookies.get("role")
 function logOut(){
   cookies.remove("token")
   cookies.remove("role")
+  cookies.remove("email")
   router.push("/sign")
   window.location.reload();
 }

@@ -72,7 +72,14 @@
           </v-fade-transition>
         </template>
       </v-text-field>
-
+      <v-alert
+          v-if="showAlert"
+          dense
+          outlined
+          type="error"
+      >
+        Użytkownik z podanym <strong>emailem</strong> już istnieje.
+      </v-alert>
       <v-text-field
           v-model="email"
           :rules="emailRules"
@@ -105,7 +112,6 @@
           </v-fade-transition>
         </template>
       </v-text-field>
-
       <v-text-field
           id="password"
           v-model="password"
@@ -145,6 +151,7 @@
 
       <v-text-field
           id="passwordReepet"
+          v-model="passwordReepet"
           label="Powtórz hasło"
           :rules="[rules.required, passwordMatch]"
           name="passwordReepet"
@@ -214,18 +221,10 @@
           </v-fade-transition>
         </template>
       </v-text-field>
-
-
-      <v-checkbox
-          v-model="checkbox"
-          :rules="[rules.statute]"
-          label="Aplikuj na organizatora"
-          required
-      ></v-checkbox>
     </v-form>
   </v-card-text>
   <div class="text-center mt-3 mb-10">
-    <v-btn rounded color="blue accent-3" dark :disabled="!valid" @click="registerUser" >ZAREJESTRUJ</v-btn>
+    <v-btn rounded color="blue accent-3" dark :disabled="valid == false" @click="registerUser" >ZAREJESTRUJ</v-btn>
   </div>
 
   </v-col>
@@ -246,10 +245,11 @@ export default {
     show1: false,
     show2: false,
     valid: false,
+    alert: false,
+    showAlert: false,
     rules: {
       required: value => !!value || "Wymagane",
       min: v => (v && v.length >= 8) || "Min 8 characters",
-      statute: v => !!v || 'Aby kontynuować musisz wyrazić zgodę!',
       number: v => /^[0-9\b]+$/.test(v) || "To nie jest numer telefonu"
     },
     emailRules: [
@@ -275,34 +275,19 @@ export default {
       }
 
       const r = await axios.post('api/listItems/auth', newUser);
-      console.log(r)
-      if(r.status == 200) {
-        await router.push("/")
+      if(r.status === 201) {
         window.location.reload();
-      }if(r.status == 400){
-
+      }else{
+        this.showAlert = true;
       }
     }
   },
+
 }
-
-// const personalData = reactive({
-//  email: {value:'', valid:true},
-//  password: {value:'', valid:true},
-//  pesel: {value:'', valid:true},
-//  phoneNumber: {value:'', valid:true},
-// })
-// const checkIfValid = computed(() => checkValid(personalData))
-//
-// const submit = () => {
-//  const data = {
-//    email: personalData.email.value,
-//    password: personalData.password.value,
-//    pesel: personalData.pesel.value,
-//    phoneNumber: personalData.phoneNumber.value,
-//  }
-//
-//  register(data)
-// }
-
 </script>
+<style>
+.visible{
+  visibility: hidden;
+
+}
+</style>
