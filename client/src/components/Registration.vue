@@ -221,6 +221,13 @@
           </v-fade-transition>
         </template>
       </v-text-field>
+      <v-select
+          :items="level"
+          v-model="level"
+          item-text="text"
+          item-value="value"
+          label="Poziom"
+      ></v-select>
     </v-form>
   </v-card-text>
   <div class="text-center mt-3 mb-10">
@@ -247,6 +254,17 @@ export default {
     valid: false,
     alert: false,
     showAlert: false,
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    phoneNumber: '',
+    level: [
+      { text: 'D - Amatorski', value: 1},
+      { text: 'C - Rekreacyjny', value: 2 },
+      { text: 'B - Średnio-zaawansowany', value: 3 },
+      { text: 'A - Zaawansowany', value: 4 },
+    ],
     rules: {
       required: value => !!value || "Wymagane",
       min: v => (v && v.length >= 8) || "Min 8 characters",
@@ -256,13 +274,6 @@ export default {
       v => !!v || "Wymagane",
       v => /.+@.+\..+/.test(v) || "Nie istnieje taki email"
     ],
-    return : {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      phoneNumber: ''
-    }
   }),
   methods: {
     async registerUser() {
@@ -271,7 +282,8 @@ export default {
       surname: this.lastName,
       email: this.email,
       password: this.password,
-      number : this.phoneNumber
+      number : this.phoneNumber,
+      level: this.level
       }
 
       const r = await axios.post('api/listItems/auth', newUser);

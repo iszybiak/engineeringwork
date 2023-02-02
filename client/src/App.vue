@@ -8,9 +8,9 @@
           <v-list-item-title class="text-h6">
             V-Team
           </v-list-item-title>
-          <v-list-item-subtitle>
-            Opcje
-          </v-list-item-subtitle>
+          <v-list-item-subtitle v-if="currentRole === 'ROLE_ADMIN'">Jesteś organizatorem</v-list-item-subtitle>
+          <v-list-item-subtitle v-if="currentRole === 'ROLE_HEAD_ADMIN'">Jesteś administratorem</v-list-item-subtitle>
+          <v-list-item-subtitle v-if="currentRole === 'ROLE_USER'">Jesteś użytkownikiem</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
@@ -66,7 +66,7 @@
 export default {
   data: () => ({ drawer: null,
     items: [
-      { title: 'Spotkania', icon: 'mdi-volleyball' , to:'/games', role:'ROLE_ADMIN' },
+      { title: 'Zaplanuj grę', icon: 'mdi-volleyball' , to:'/games', role:'ROLE_ADMIN' },
       { title: 'Moje spotkania', icon: 'mdi-account-box' , to:'/userGames', role:['ROLE_USER' , 'ROLE_ADMIN']},
       { title: 'Uczestnicy', icon: 'mdi-account-group', to:'/users', role:['ROLE_USER' , 'ROLE_ADMIN']},
       { title: 'Ranking', icon: 'mdi-format-list-numbered', to:'/ranking', role:['ROLE_USER' , 'ROLE_ADMIN']},

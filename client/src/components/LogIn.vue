@@ -26,16 +26,6 @@
               Podaj email
             </v-tooltip>
           </template>
-          <template v-slot:append>
-            <v-fade-transition leave-absolute>
-              <v-progress-circular
-                  v-if="loading"
-                  size="24"
-                  color="info"
-                  indeterminate
-              ></v-progress-circular>
-            </v-fade-transition>
-          </template>
         </v-text-field>
         <v-text-field
             id="password"
@@ -59,16 +49,6 @@
               </template>
               Podaj hasło
             </v-tooltip>
-          </template>
-          <template v-slot:append>
-            <v-fade-transition leave-absolute>
-              <v-progress-circular
-                  v-if="loading"
-                  size="24"
-                  color="info"
-                  indeterminate
-              ></v-progress-circular>
-            </v-fade-transition>
           </template>
         </v-text-field>
       </v-form>

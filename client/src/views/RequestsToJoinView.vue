@@ -2,6 +2,9 @@
   <v-card
       class="mx-auto"
   >
+    <v-card-actions>
+
+    </v-card-actions>
     <v-list>
       <v-list-item
           v-for="item in filterData"

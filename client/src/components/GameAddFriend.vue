@@ -8,10 +8,12 @@
       <v-overflow-btn
           v-if="filterFriends"
           :items="filterFriends"
-          :item-text="filterFriends => filterFriends.name + ' ' + filterFriends.surname"
+          :item-text="filterFriends => filterFriends.name + ' '
+          + filterFriends.surname"
           v-model="friendID"
           item-value="_id"
           class="my-2"
+          no-data-text="Brak graczy"
           label="Wybierz gracza"
           >
       </v-overflow-btn>
@@ -53,6 +55,7 @@ onMounted(async () => {
   console.log(friend.value)
 
   filterFriends.value = friend.value.filter((i) => !dataMeet.value.friends.includes(i._id))
+  filterFriends.value = filterFriends.value.filter((i) => i.role ==='ROLE_USER' || i.role ==='ROLE_ADMIN' ).sort((a,b) => b.level - a.level)
 })
 async function addFriend(){
   await axios.put('api/listMeets/friends/' +props.meetId , {
@@ -63,6 +66,10 @@ async function addFriend(){
     friendId: friendID.value,
     meetId: props.meetId,
   });
+
+
+
+
   window.location.reload();
 }
 </script>

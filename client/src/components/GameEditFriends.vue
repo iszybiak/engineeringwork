@@ -86,9 +86,7 @@ async function save() {
   let newPoints = data.value.points
   console.log("start" + newPoints)
 
-  if(data.value.confirm === 0){
-    newPoints = newPoints - 1
-  } if(data.value.confirm === 1 && chosenArrived.value == '2'){
+  if(data.value.confirm === 1 && chosenArrived.value == '2'){
     newPoints = newPoints -2
   } if(chosenArrived.value == '1'){
     newPoints = newPoints + 2

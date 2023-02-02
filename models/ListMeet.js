@@ -23,9 +23,25 @@ const ListMeetSchema = new Schema({
         friends: {
             type: [String]
         },
+        cancelled: {
+            type: [String]
+        },
+        reserved: {
+            type: [String]
+        },
         maker: {
             type: String
+        },
+        invitation: {
+            type: Boolean,
+            default: false,
+        },
+        periodicity: {
+            type: Boolean,
+            default: false,
         }
+
+
 
 })
 

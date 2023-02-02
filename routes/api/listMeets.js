@@ -31,6 +31,15 @@ router.get('/:id', async(req,res) => {
         res.status(500).json({message : error.message})
     }
 })
+router.get('/maker/:maker', async(req,res) => {
+    const {maker} = req.params
+    try {
+        const response = await ListMeet.find({maker: maker})
+        res.status(200).json(response)
+    } catch (error) {
+        res.status(500).json({message : error.message})
+    }
+})
 
 //POST
 router.post('/', async (req, res) => {
@@ -65,6 +74,33 @@ router.put('/friends/:id', async(req,res) => {
             if(err) return res.status(500).send(err);
             // Send response to client
             res.send("New friend added to meet.");
+        });
+    });
+})
+router.delete('/friends/:id', async(req, res) => {
+    ListMeet.findById(req.params.id, (err, meet) => {
+        if(err) return res.status(500).send(err);
+        if(!meet) return res.status(404).send("Meet not found.");
+        let friendIndex = meet.friends.indexOf(req.body.friends);
+        if(friendIndex === -1) return res.status(404).send("Friend not found in meet.");
+        meet.friends.splice(friendIndex, 1);
+        meet.save((err) => {
+            if(err) return res.status(500).send(err);
+// Send response to client
+            res.send("Friend deleted from meet.");
+        });
+    });
+});
+
+router.put('/cancelled/:id', async(req,res) => {
+    ListMeet.findById(req.params.id, (err, meet) => {
+        if(err) return res.status(500).send(err);
+        if(!meet) return res.status(404).send("Meet not found.");
+        meet.cancelled.push(req.body.cancelled);
+        meet.save((err) => {
+            if(err) return res.status(500).send(err);
+            // Send response to client
+            res.send("Friend added to cancelled");
         });
     });
 })
@@ -159,13 +195,13 @@ router.post('/email-send', (req, res) => {
     const transporter = nodemailer.createTransport({
         service: 'hotmail',
         auth: {
-            user: 'volleyball_Team@outlook.com',
+            user: 'volleyball_team@outlook.com',
             pass: 'v!TeaM23.'
         }
     });
 
     const mailOptions = {
-        from: 'volleyball_Team@outlook.com',
+        from: 'volleyball_team@outlook.com',
         to: req.body.to, // recipient email address
         subject: req.body.subject,
         text: req.body.text

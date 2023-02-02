@@ -110,7 +110,7 @@ export default {
     },
     async accessAdmin(id){
       const res =  await axios.put('api/listItems/' + id , {
-        role : 'ROLE_USER'
+        role : 'ROLE_ADMIN'
       });
       window.location.reload()
     },

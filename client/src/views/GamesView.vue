@@ -12,9 +12,7 @@
           dark
           v-bind="attrs"
           v-on="on"
-          
-        >
-          Utwórz spotkanie
+        > Utwórz spotkanie
         </v-btn>
       </template>
 
@@ -50,7 +48,7 @@
           <v-date-picker
                 v-model="date"
                 :rules="[rules.required]"
-                :min="nowDate"
+                :min="currentDate"
                 @input="menu = false"
               >
           </v-date-picker>
@@ -115,6 +113,7 @@
             <v-select
                 :items="level"
                 v-model="level"
+                item-text="text"
                 item-value="value"
                 label="Poziom"
             ></v-select>
@@ -128,9 +127,7 @@
             value="0"
             suffix="zł"
             ></v-text-field>
-
           </v-col>
-
         </v-row>
 
         <v-row>
@@ -171,13 +168,86 @@
                 <template v-else>
                   <v-list-item-content>
                     <v-list-item-title>{{ data.item.name + " " + data.item.surname }}</v-list-item-title>
-                    <v-list-item-subtitle>{{ "Punkty  "+ data.item.points}}</v-list-item-subtitle>
+                    <v-list-item-subtitle v-if="data.item.level === 1">
+                      {{ "Punkty  "+ data.item.points+ " | "}}  Amatorski
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle v-if="data.item.level === 2">
+                      {{ "Punkty  "+ data.item.points+ " | "}}  Rekreacyjny
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle v-if="data.item.level === 3">
+                      {{ "Punkty  "+ data.item.points + " | "}} Średnio-zaawansowany
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle v-if="data.item.level === 4">
+                      {{ "Punkty  "+ data.item.points + " | "}}  Zaawansowany
+                    </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
               </template>
             </v-autocomplete>
           </v-col>
         </v-row>
+          <v-row>
+            <v-col>
+              <v-autocomplete
+                  v-model="reserveID"
+                  :rules="[rules.required]"
+                  :items = "rData"
+                  chips
+                  label="Lista rezerwowa"
+                  item-value="id"
+                  multiple
+                  @change="limiteCategory"
+              >
+
+                <template v-slot:selection="data"
+
+                >
+                  <v-chip
+                      v-bind="data.attrs"
+                      :input-value="data.selected"
+                      close
+                      @click="data.select"
+                      @click:close="remove(data.item)"
+
+                  >
+                    {{ data.item.name + " " + data.item.surname }}
+                  </v-chip>
+                </template>
+
+                <template v-slot:item="data"
+                >
+                  <template v-if="typeof data.item !== 'object' ">
+                    <v-list-item-content v-text="data.item"
+
+                    >{{data.item}}</v-list-item-content>
+                  </template>
+                  <template v-else>
+                    <v-list-item-content>
+                      <v-list-item-title>{{ data.item.name + " " + data.item.surname }}</v-list-item-title>
+                      <v-list-item-subtitle v-if="data.item.level === 1">
+                        {{ "Punkty  "+ data.item.points+ " | "}}  Amatorski
+                      </v-list-item-subtitle>
+                      <v-list-item-subtitle v-if="data.item.level === 2">
+                        {{ "Punkty  "+ data.item.points+ " | "}}  Rekreacyjny
+                      </v-list-item-subtitle>
+                      <v-list-item-subtitle v-if="data.item.level === 3">
+                        {{ "Punkty  "+ data.item.points + " | "}} Średnio-zaawansowany
+                      </v-list-item-subtitle>
+                      <v-list-item-subtitle v-if="data.item.level === 4">
+                        {{ "Punkty  "+ data.item.points + " | "}}  Zaawansowany
+                      </v-list-item-subtitle>
+                    </v-list-item-content>
+                  </template>
+                </template>
+              </v-autocomplete>
+            </v-col>
+          </v-row>
+            <v-row>
+              <v-switch
+                  v-model="switch1"
+                  label="Spotkanie cykliczne"
+              ></v-switch>
+            </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions
@@ -206,102 +276,99 @@
 
 
 <script>
-import axios from "axios";
+import axios, {get} from "axios";
 import GameList from "@/components/GameList"
 import Cookies from "universal-cookie/es6";
 
+let predFriends = [];
 const cookies = new Cookies()
 const currentEmail = cookies.get("email")
-console.log(currentEmail)
-  export default {
+export default {
   components: { GameList },
-    data ()
-    {
-      return {
-        items: [],
-        dialog: false,
-        nowDate: new Date().toISOString().slice(0,10),
-        menu: false,
-        friendsID: [],
-        date: "",
-        time: "",
-        place: "",
-        price: 0,
-        menu2: false,
-        modal2: false,
-        level: [
-          { text: 'D - Amatorski', value: 1},
-          { text: 'C - Rekreacyjny', value: 2 },
-          { text: 'B - Średnio-zaawansowany', value: 3 },
-          { text: 'A - Zaawansowany', value: 4 },
-        ],
-        rules: {
-          required: value => !!value || "Wymagane"
-        }
-      };
-    },
+  data () {
+    return {
+      items: [],
+      dialog: false,
+      currentDate: new Date().toISOString().slice(0,10),
+      menu: false,
+      friendsID: predFriends,
+      reserveID: [],
+      date: "",
+      time: "",
+      place: "",
+      price: 0,
+      menu2: false,
+      modal2: false,
+      switch1: false,
+      level: [
+        { text: 'D - Amatorski', value: 1},
+        { text: 'C - Rekreacyjny', value: 2 },
+        { text: 'B - Średnio-zaawansowany', value: 3 },
+        { text: 'A - Zaawansowany', value: 4 },
+      ],
+      rules: {
+        required: value => !!value || "Wymagane"
+      }
+    };
+  },
+  async mounted(){
+    const response = await axios.get('api/listItems/')
+    this.items = response.data;
 
-    async mounted(){
-      const response = await axios.get('api/listItems/')
-      this.items = response.data;
-    },
+    const res = await axios.get('api/listMeets/maker/' + currentEmail)
+    this.meet = res.data;
 
-    methods: {
-      async addItem(){
-        const response = await axios.post('api/listMeets/', {
-          meeting_date: this.date + "T" + this.time,
-          place: this.place,
-          price: this.price,
-          level: this.level,
-          friends: this.friendsID,
-          maker: currentEmail,
+    const sortMeet = this.meet.sort(function (a,b) {
+      if(a.creation_date < b.creation_date){ return -1}
+      if(a.creation_date > b.creation_date){ return 1 }
+      return 0;
+    });
+
+    for(const elem of sortMeet[0].friends){
+      const response = await axios.get('api/listItems/' + elem)
+      this.f = response.data;
+      predFriends.push(this.f)
+    }
+
+
+  },
+  methods: {
+    async addItem(){
+      const response = await axios.post('api/listMeets/', {
+        meeting_date: this.date + "T" + this.time,
+        place: this.place,
+        price: this.price,
+        level: this.level,
+        friends: this.friendsID,
+        maker: currentEmail,
+        reserved: this.reserveID,
+        periodicity: this.switch1
+        });
+      if(response.status === 200) {
+        for (const elem of response.data.friends) {
+          await axios.post('api/listMeets/squad/', {
+            friendId: elem,
+            meetId: response.data._id,
           });
-        let checkFriends;
-        if(response.status == 200) {
-          for (const elem of response.data.friends) {
-            await axios.post('api/listMeets/squad/', {
-              friendId: elem,
-              meetId: response.data._id,
-            });
-          }
-          for (const elem of response.data.friends) {
-
-            console.log("Siatkówka - "+this.date+" - godz. - "+this.time+" - "+this.place )
-
-            checkFriends = this.items.filter((item) => item._id == elem)
-            console.log(checkFriends[0].email + "  ---- " + checkFriends[0].number )
-            await axios.post('api/listMeets/email-send', {
-               to: checkFriends[0].email,
-               subject: "Siatkówka - "+this.date+" - godz. - "+this.time+" - "+this.place,
-               text: "Cześć ! Zapraszam Cię do wspólnej gry "+this.date+" o godzinie "+
-                   this.time+". Miejsce - "+this.place +
-                   "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/#/userGames"
-            });
-            // await axios.post('api/listMeets/sms', {
-            //   to: checkFriends[0].number,
-            //   text: "Cześć "+checkFriends[0].name +" ! Zapraszam Cię do wspólnej gry "+this.date+" o godzinie "+
-            //       this.time+". Miejsce - "+this.place +
-            //       "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/#/"
-            // });
-          }
-          //window.location.reload();
-       }
-      },
-      remove (item) {
-        const index = this.items.indexOf(item.id)
-        if (index >= 0) this.items.splice(index, 1)
-      },
-      limiteCategory() {
-        if (this.friendsID.length > 12)  this.friendsID.pop()
-      },
-
+        }
+     }
+      window.location.reload();
     },
-    computed: {
-      fData: function () {
-        return this.items.filter( el => { return el.role !== "ROLE_BASIC" } )
-      },
+    remove (item) {
+      const index = this.items.indexOf(item.id)
+      if (index >= 0) this.items.splice(index, 1)
     },
-
-    
-  }
+    limiteCategory() {
+      if (this.friendsID.length > 12)  this.friendsID.pop()
+    },
+  },
+  computed: {
+    fData: function () {
+      return this.items.filter( el => { return el.role === "ROLE_USER" || el.role === "ROLE_ADMIN" }).sort((a,b) => b.level - a.level)
+    },
+    rData: function () {
+      return this.fData.filter(o => !this.friendsID.map(op => op._id).includes(o._id))
+    },
+  },
+}
 </script>

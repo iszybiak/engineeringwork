@@ -4,6 +4,18 @@
   >
 
     <v-list>
+      <v-list-item>
+        <v-list-item-avatar>Nr</v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title >Imię Nazwisko</v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-content>
+          <v-list-item-title >Ilość punktów</v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-content>
+          <v-list-item-title >Ilość niesłowności</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
       <v-list-item
         v-for="(item, index) in filterData"
         :key="item._id"
@@ -13,11 +25,15 @@
         <v-list-item-avatar>{{index+1}}</v-list-item-avatar>
         
         <v-list-item-content>
-          <v-list-item-title >{{ item.name + " " + item.surname}}</v-list-item-title>
+          <v-list-item-title >{{item.name + " " + item.surname}}</v-list-item-title>
         </v-list-item-content>
 
         <v-list-item-content>
-          <v-list-item-title >{{ item.points }}</v-list-item-title>
+          <v-list-item-title >{{item.points}}</v-list-item-title>
+        </v-list-item-content>
+
+        <v-list-item-content>
+          <v-list-item-title >{{item.behavior}}</v-list-item-title>
         </v-list-item-content>
 
       </v-list-item>
