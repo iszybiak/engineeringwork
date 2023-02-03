@@ -32,6 +32,9 @@
             </template>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
+            <v-row v-if="meet.periodicity === true">
+              <p class="grey--text ml-3">Spotkanie cykliczne - utworzy tydzień po tym</p>
+            </v-row>
             <v-row class="tab-header">
               <v-col>Zawodnik</v-col>
               <v-col class="edit-col"></v-col>
@@ -295,21 +298,47 @@ export default {
     const resp = await axios.get('api/listItems/')
     this.friend = resp.data;
 
-    if(this.filterByInvitation){
-      for(const elem of this.filterByInvitation){
-        const date1 = new Date (elem.meeting_date)
-        const date2 = new Date (this.currentDate)
-        const timeDiff = Math.abs(date1 - date2);
-        const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-        if( diffDays < 3){
-          await this.sendInvite(elem._id)
-        }
+    const date2 = new Date (this.currentDate)
+
+    for(const elem of this.filterByInvitation){
+      const date1 = new Date (elem.meeting_date)
+      const timeDiff = Math.abs(date1 - date2);
+      const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+      if( diffDays < 3){
+        await this.sendInvite(elem._id)
       }
-     }
-    // if(this.filterByPeriodicity){
-    //
-    //
-    // }
+    }
+
+
+
+    for(const elem of this.filterByPeriodicity){
+      const date1 = new Date (elem.meeting_date)
+      const timeDiff = Math.abs( date1 - date2);
+      const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+      if(date1 < date2 && diffDays > 4){
+        const newDate = date1.setDate(date1.getDate() + 7);
+        const response = await axios.post('api/listMeets/', {
+          meeting_date: newDate,
+          place: elem.place,
+          price: elem.price,
+          level: elem.level,
+          friends: elem.friends,
+          maker: currentEmail,
+          reserved: elem.reserveID,
+          periodicity: true
+        });
+        if(response.status === 200) {
+          for (const elem of response.data.friends) {
+            await axios.post('api/listMeets/squad/', {
+              friendId: elem,
+              meetId: response.data._id,
+            });
+          }
+        }
+        await axios.put('api/listMeets/' +elem._id , {
+         periodicity: false });
+      }
+    }
 
   },
   methods: {

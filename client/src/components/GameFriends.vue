@@ -41,7 +41,7 @@
         >
           <template v-slot:activator="{ on }">
 
-        <span class="gray check" v-on="on" v-model="chosen">Brak informacji</span>
+        <span class="gray check" v-on="on" v-model="selected">Brak informacji</span>
           </template>
           <v-card width="200">
             <v-list>
@@ -73,7 +73,7 @@
 
 <script setup>
 import axios from "axios";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 
 const props = defineProps({
   friend: {
@@ -127,18 +127,15 @@ async function send(email, number) {
   //   text: "Nie poinformowałeś ogranizatorów o swojej obecności na spotkaniu. " +
   // "Zrób to jak najszybciej! http://localhost:8080/userGames"
   // });
-
-
 }
-
 async function chosen(d, friend){
   if(d === 0 ){
     await axios.put('api/listMeets/squad/' +props.meetId + "/" + friend, {
       arrived: 2,
     });
     points = points - 2
-
-  }if(d === 1){
+  }
+  if(d === 1){
     console.log("Opłacił")
     await axios.put('api/listMeets/squad/' +props.meetId + "/" + friend, {
       arrived: 1,
@@ -172,7 +169,7 @@ async function cancel(id, email, number){
     cancelled: id
   });
 
-  await axios.delete(`/api/listMeets/friends/${meet.value._id}`, {
+  await axios.delete('/api/listMeets/friends/' + meet.value._id , {
     data: { friends: id }
   });
 
@@ -206,13 +203,16 @@ export default {
       alert: false,
       menu: false,
       hover: false,
-      chosen: ""
+      selected: ""
     };
   },
   watch: {
     alert (val) {
       if (!val) return
       setTimeout(() => (this.alert = false), 3000)
+    },
+    selected: function (d){
+      console.log("Napis")
     }
   },
 }
