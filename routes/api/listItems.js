@@ -50,8 +50,6 @@ router.get('/token', async (req, res) => {
 })
 
 
-
-
 //POST
 router.post('/auth', async (req, res) => {
     try{

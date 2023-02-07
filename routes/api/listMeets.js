@@ -2,10 +2,10 @@ const { Router } = require('express')
 const ListMeet = require('../../models/ListMeet')
 const ListMeetSquad = require('../../models/ListMeetSquad')
 const nodemailer = require("nodemailer");
-const twilio = require('twilio');
-const accountSid = "ACf4ac85668cab96748db5aaada279d283";
-const authToken = "7f72055f461fb0d92d1ead89c52f1ce0";
-const client = new twilio(accountSid, authToken);
+// const twilio = require('twilio');
+// const accountSid = "ACf4ac85668cab96748db5aaada279d283";
+// const authToken = "7f72055f461fb0d92d1ead89c52f1ce0";
+// const client = new twilio(accountSid, authToken);
 const Nexmo = require('nexmo');
 
 
@@ -218,21 +218,21 @@ router.post('/email-send', (req, res) => {
 });
 
 //SMS SEND
-router.post('/sendsms', (req, res) => {
-    const { phoneNumber, message } = req.body;
-    client.messages
-        .create({
-            body: message,
-            from: '+13855264981',
-            to: phoneNumber
-        })
-        .then(() => {
-            res.send('SMS sent successfully');
-        })
-        .catch(err => {
-            res.status(500).send(err);
-        });
-});
+// router.post('/sendsms', (req, res) => {
+//     const { phoneNumber, message } = req.body;
+//     client.messages
+//         .create({
+//             body: message,
+//             from: '+13855264981',
+//             to: phoneNumber
+//         })
+//         .then(() => {
+//             res.send('SMS sent successfully');
+//         })
+//         .catch(err => {
+//             res.status(500).send(err);
+//         });
+// });
 
 const nexmo = new Nexmo({
     apiKey: 'f6d75c02',

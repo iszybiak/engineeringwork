@@ -129,6 +129,7 @@ async function send(email, number) {
   // });
 }
 async function chosen(d, friend){
+  let badBehavior = data.value.behavior + 1
   if(d === 0 ){
     await axios.put('api/listMeets/squad/' +props.meetId + "/" + friend, {
       arrived: 2,
@@ -151,18 +152,15 @@ async function chosen(d, friend){
   }
 
   await axios.put('api/listItems/' + friend, {
-    points: points
+    points: points,
+    behavior: badBehavior
   });
 }
-
 async function cancel(id, email, number){
   points = points - 1
-  let badBehavior = data.value.behavior + 1
-
 
   await axios.put('api/listItems/' + id, {
-    points: points,
-    behavior : badBehavior
+    points: points
   });
 
   await axios.put('api/listMeets/cancelled/' +  meet.value._id, {

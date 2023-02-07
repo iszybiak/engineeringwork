@@ -225,9 +225,33 @@
           :items="level"
           v-model="level"
           item-text="text"
+          outlined
           item-value="value"
           label="Poziom"
-      ></v-select>
+      >
+        <template v-slot:prepend>
+          <v-tooltip
+              bottom
+          >
+            <template v-slot:activator="{ on }">
+              <v-icon v-on="on">
+                mdi-clipboard-list-outline
+              </v-icon>
+            </template>
+            Wybierz poziom
+          </v-tooltip>
+        </template>
+        <template v-slot:append>
+          <v-fade-transition leave-absolute>
+            <v-progress-circular
+                v-if="loading"
+                size="24"
+                color="info"
+                indeterminate
+            ></v-progress-circular>
+          </v-fade-transition>
+        </template>
+      </v-select>
     </v-form>
   </v-card-text>
   <div class="text-center mt-3 mb-10">

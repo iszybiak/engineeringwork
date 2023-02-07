@@ -266,7 +266,6 @@
 import axios from "axios";
 import moment from 'moment'
 import GameFriends from "@/components/GameFriends.vue";
-import GameEdit from "@/components/GameEditFriends.vue";
 import Cookies from "universal-cookie/es6";
 import GameMove from "@/components/GameMove.vue";
 import GameAddFriend from "@/components/GameAddFriend.vue";
@@ -274,7 +273,7 @@ import GameCancelled from "@/components/GameCancelled.vue";
 const cookies = new Cookies()
 const currentEmail = cookies.get("email")
 export default {
-  components: {GameCancelled, GameAddFriend, GameMove, GameEdit, GameFriends},
+  components: {GameCancelled, GameAddFriend, GameMove, GameFriends},
   data ()
   {
     return {
@@ -299,7 +298,7 @@ export default {
     this.friend = resp.data;
 
     const date2 = new Date (this.currentDate)
-
+    setTimeout(async () => {
     for(const elem of this.filterByInvitation){
       const date1 = new Date (elem.meeting_date)
       const timeDiff = Math.abs(date1 - date2);
@@ -308,37 +307,39 @@ export default {
         await this.sendInvite(elem._id)
       }
     }
+    }, 86400000)
 
-
-
-    for(const elem of this.filterByPeriodicity){
-      const date1 = new Date (elem.meeting_date)
-      const timeDiff = Math.abs( date1 - date2);
-      const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-      if(date1 < date2 && diffDays > 4){
-        const newDate = date1.setDate(date1.getDate() + 7);
-        const response = await axios.post('api/listMeets/', {
-          meeting_date: newDate,
-          place: elem.place,
-          price: elem.price,
-          level: elem.level,
-          friends: elem.friends,
-          maker: currentEmail,
-          reserved: elem.reserveID,
-          periodicity: true
-        });
-        if(response.status === 200) {
-          for (const elem of response.data.friends) {
-            await axios.post('api/listMeets/squad/', {
-              friendId: elem,
-              meetId: response.data._id,
-            });
+    setTimeout(async () => {
+      for (const elem of this.filterByPeriodicity) {
+        const date1 = new Date(elem.meeting_date)
+        const timeDiff = Math.abs(date1 - date2);
+        const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        if (date1 < date2 && diffDays > 4) {
+          const newDate = date1.setDate(date1.getDate() + 7);
+          const response = await axios.post('api/listMeets/', {
+            meeting_date: newDate,
+            place: elem.place,
+            price: elem.price,
+            level: elem.level,
+            friends: elem.friends,
+            maker: currentEmail,
+            reserved: elem.reserveID,
+            periodicity: true
+          });
+          if (response.status === 200) {
+            for (const elem of response.data.friends) {
+              await axios.post('api/listMeets/squad/', {
+                friendId: elem,
+                meetId: response.data._id,
+              });
+            }
           }
+          await axios.put('api/listMeets/' + elem._id, {
+            periodicity: false
+          });
         }
-        await axios.put('api/listMeets/' +elem._id , {
-         periodicity: false });
       }
-    }
+    }, 86400000)
 
   },
   methods: {
@@ -399,12 +400,12 @@ export default {
               time+". Miejsce - "+place +
               "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/userGames"
         });
-        // await axios.post('api/listMeets/sms', {
-        //   to: checkFriends[0].number,
-        //   text: "Cześć "+checkFriends[0].name +" ! Zapraszam Cię do wspólnej gry "+date+" o godzinie "+
-        //       time+". Miejsce - "+place +
-        //       "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/#/"
-        // });
+        await axios.post('api/listMeets/sms', {
+          to: checkFriends[0].number,
+          text: "Cześć "+checkFriends[0].name +" ! Zapraszam Cię do wspólnej gry "+date+" o godzinie "+
+              time+". Miejsce - "+place +
+              "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/#/"
+        });
       }
       await axios.put('api/listMeets/' + id,  {
         invitation: true

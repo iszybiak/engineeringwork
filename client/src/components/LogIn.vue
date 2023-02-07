@@ -72,7 +72,6 @@
 
  const cookie = new Cookies()
  async function  logIn() {
-
    const response = await axios.post('api/listItems/sign', {
      email: email.value,
      password: password.value

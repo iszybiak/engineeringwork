@@ -10,7 +10,8 @@ const ListMeetSchema = new Schema({
             required: true,
         },
         place: {
-            type: String
+            type: String,
+            required: true,
         },
         price: {
             type: Number,
@@ -23,10 +24,10 @@ const ListMeetSchema = new Schema({
         friends: {
             type: [String]
         },
-        cancelled: {
+        reserved: {
             type: [String]
         },
-        reserved: {
+        cancelled: {
             type: [String]
         },
         maker: {
@@ -40,9 +41,6 @@ const ListMeetSchema = new Schema({
             type: Boolean,
             default: false,
         }
-
-
-
 })
 
 const ListMeet = model('listMeet', ListMeetSchema)
