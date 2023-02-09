@@ -41,7 +41,8 @@
         >
           <template v-slot:activator="{ on }">
 
-        <span class="gray check" v-on="on" v-model="selected">Brak informacji</span>
+            <span class="gray check" v-on="on" v-bind:class="{'green-text': selected === 1, 'red-text': selected === 0, 'yellow-text': selected === 2}">
+              {{selected === 0 ? 'Nie przybył' : selected === 1 ? 'Opłacono' : selected === 2 ? 'Nie opłacono' : 'Brak informacji'}}</span>
           </template>
           <v-card width="200">
             <v-list>
@@ -73,7 +74,7 @@
 
 <script setup>
 import axios from "axios";
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 
 const props = defineProps({
   friend: {
@@ -87,8 +88,9 @@ const props = defineProps({
 const data = ref('')
 const data2 = ref('')
 const meet = ref('')
+const selected = ref('')
 const currentDate = new Date().toISOString()
-
+computed(() => selected)
 
 
 onMounted(async () => {
@@ -101,7 +103,6 @@ onMounted(async () => {
   const res =  await axios.get('api/listMeets/squad/' +props.meetId + "/" + props.friend);
   data2.value = res.data;
 })
-
 let points = data.value.points
 function format_date(value){
   if (value) {
@@ -155,6 +156,7 @@ async function chosen(d, friend){
     points: points,
     behavior: badBehavior
   });
+  selected.value = d
 }
 async function cancel(id, email, number){
   points = points - 1
