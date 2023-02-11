@@ -26,16 +26,7 @@
             Podaj imie
           </v-tooltip>
         </template>
-        <template v-slot:append>
-          <v-fade-transition leave-absolute>
-            <v-progress-circular
-                v-if="loading"
-                size="24"
-                color="info"
-                indeterminate
-            ></v-progress-circular>
-          </v-fade-transition>
-        </template>
+
       </v-text-field>
 
       <v-text-field
@@ -60,16 +51,6 @@
             </template>
             Podaj nazwisko
           </v-tooltip>
-        </template>
-        <template v-slot:append>
-          <v-fade-transition leave-absolute>
-            <v-progress-circular
-                v-if="loading"
-                size="24"
-                color="info"
-                indeterminate
-            ></v-progress-circular>
-          </v-fade-transition>
         </template>
       </v-text-field>
       <v-alert
@@ -101,16 +82,6 @@
             Podaj email
           </v-tooltip>
         </template>
-        <template v-slot:append>
-          <v-fade-transition leave-absolute>
-            <v-progress-circular
-                v-if="loading"
-                size="24"
-                color="info"
-                indeterminate
-            ></v-progress-circular>
-          </v-fade-transition>
-        </template>
       </v-text-field>
       <v-text-field
           id="password"
@@ -136,16 +107,6 @@
             </template>
             Podaj hasło
           </v-tooltip>
-        </template>
-        <template v-slot:append>
-          <v-fade-transition leave-absolute>
-            <v-progress-circular
-                v-if="loading"
-                size="24"
-                color="info"
-                indeterminate
-            ></v-progress-circular>
-          </v-fade-transition>
         </template>
       </v-text-field>
 
@@ -175,23 +136,12 @@
             Podaj hasło
           </v-tooltip>
         </template>
-        <template v-slot:append>
-          <v-fade-transition leave-absolute>
-            <v-progress-circular
-                v-if="loading"
-                size="24"
-                color="info"
-                indeterminate
-            ></v-progress-circular>
-          </v-fade-transition>
-        </template>
       </v-text-field>
 
       <v-text-field
           v-model="phoneNumber"
           :counter="9"
           :rules="[rules.required, rules.number]"
-          :error-messages="errors"
           label="Numer telefonu"
           outlined
           clearable
@@ -209,16 +159,6 @@
             </template>
             Podaj numer telefonu
           </v-tooltip>
-        </template>
-        <template v-slot:append>
-          <v-fade-transition leave-absolute>
-            <v-progress-circular
-                v-if="loading"
-                size="24"
-                color="info"
-                indeterminate
-            ></v-progress-circular>
-          </v-fade-transition>
         </template>
       </v-text-field>
       <v-select
@@ -240,16 +180,6 @@
             </template>
             Wybierz poziom
           </v-tooltip>
-        </template>
-        <template v-slot:append>
-          <v-fade-transition leave-absolute>
-            <v-progress-circular
-                v-if="loading"
-                size="24"
-                color="info"
-                indeterminate
-            ></v-progress-circular>
-          </v-fade-transition>
         </template>
       </v-select>
     </v-form>
@@ -282,6 +212,7 @@ export default {
     lastName: '',
     email: '',
     password: '',
+    passwordReepet: '',
     phoneNumber: '',
     level: [
       { text: 'D - Amatorski', value: 1},
@@ -324,6 +255,5 @@ export default {
 <style>
 .visible{
   visibility: hidden;
-
 }
 </style>

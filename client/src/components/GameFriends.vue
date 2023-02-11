@@ -1,10 +1,12 @@
 <template>
   <v-expansion-panel-content>
     <v-row v-if="data2.confirm !== 2">
-      <v-col >
+      <v-col>
         {{data.name +" "+ data.surname}}
       </v-col>
       <v-col class="edit-col">
+        <v-row>
+        <v-col>
         <v-tooltip v-if="data2.confirm === 0" left>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -24,14 +26,21 @@
           </template>
           <span>Anuluj zaproszenie</span>
         </v-tooltip>
+        </v-col>
+        <v-col class="mob">
+          <p v-if="data2.confirm === 0"  class="gray" @click="alert = !alert, send(data.email, data.number)">
+            <v-icon>mdi-send</v-icon>
+          </p>
+          <p v-if="data2.confirm === 1" ><v-icon class="green--text">mdi-account-check</v-icon></p>
+        </v-col>
+        </v-row>
       </v-col>
-      <v-col>
+      <v-col class="mobileNone">
         <p v-if="data2.confirm === 0"  class="gray clickable" @click="alert = !alert, send(data.email, data.number)"></p>
         <p v-if="data2.confirm === 1" class="green-text">Będzie</p>
-        <p v-if="data2.confirm === 2" class="red-text">Nie będzie</p>
       </v-col>
       <v-col >
-        <template v-if="data2.arrived === 0" >
+        <template v-if="data2.arrived === 0 && data2.confirm === 1" >
         <v-menu
             v-model="menu"
             bottom
@@ -42,7 +51,7 @@
           <template v-slot:activator="{ on }">
 
             <span class="gray check" v-on="on" v-bind:class="{'green-text': selected === 1, 'red-text': selected === 0, 'yellow-text': selected === 2}">
-              {{selected === 0 ? 'Nie przybył' : selected === 1 ? 'Opłacono' : selected === 2 ? 'Nie opłacono' : 'Brak informacji'}}</span>
+              {{selected === 0 ? 'Nie przybył' : selected === 1 ? 'Opłacono' : selected === 2 ? 'Nie opłacono' : 'Dodaj'}}</span>
           </template>
           <v-card width="200">
             <v-list>
@@ -59,6 +68,7 @@
           </v-card>
         </v-menu>
         </template>
+        <p v-if="data2.confirm !== 1" class="grey--text align-center">Brak</p>
         <p v-if="data2.arrived === 2" class="red-text">Nie przybył</p>
         <p v-if="data2.fee === 1" class="green-text">Opłacono</p>
         <p v-if="data2.fee === 2" class="yellow-text">Nie opłacono</p>
@@ -85,13 +95,14 @@ const props = defineProps({
   }
 })
 
+
+
 const data = ref('')
 const data2 = ref('')
 const meet = ref('')
-const selected = ref('')
+const show = ref('')
 const currentDate = new Date().toISOString()
-computed(() => selected)
-
+computed(() => show)
 
 onMounted(async () => {
   const r =  await axios.get('api/listMeets/' + props.meetId );
@@ -103,7 +114,7 @@ onMounted(async () => {
   const res =  await axios.get('api/listMeets/squad/' +props.meetId + "/" + props.friend);
   data2.value = res.data;
 })
-let points = data.value.points
+
 function format_date(value){
   if (value) {
     return moment(String(value)).lang('PL').format(' dddd - '+'DD MMM ')
@@ -130,6 +141,7 @@ async function send(email, number) {
   // });
 }
 async function chosen(d, friend){
+  let points = parseInt(data.value.points)
   let badBehavior = data.value.behavior + 1
   if(d === 0 ){
     await axios.put('api/listMeets/squad/' +props.meetId + "/" + friend, {
@@ -153,16 +165,17 @@ async function chosen(d, friend){
   }
 
   await axios.put('api/listItems/' + friend, {
-    points: points,
+    points: points.toString(),
     behavior: badBehavior
   });
   selected.value = d
 }
 async function cancel(id, email, number){
+  let points = parseInt(data.value.points)
   points = points - 1
 
   await axios.put('api/listItems/' + id, {
-    points: points
+    points: points.toString()
   });
 
   await axios.put('api/listMeets/cancelled/' +  meet.value._id, {
@@ -188,8 +201,7 @@ async function cancel(id, email, number){
   //   text: "Nie poinformowałeś ogranizatorów o swojej obecności na spotkaniu. " +
   // "Zrób to jak najszybciej! http://localhost:8080/userGames"
   // });
-
-  window.location.reload()
+  location.reload();
 }
 
 </script>
@@ -268,7 +280,29 @@ export default {
 .cancel{
   left: -40px;
 }
+@media only screen and (min-width: 586px){
+.mob{
+  display: none;
+}
+}
 
+@media only screen and (max-width: 585px) {
+  .edit-col {
+    display: block !important;
+    max-width: 100% !important;
+    text-align: center;
+  }
+  .clickable {
+    cursor: pointer;
+  }
+  .check {
+    display: block;
+    text-align: center;
+  }
+  .mobileNone{
+    display: none;
+    text-align: right;
+  }
 
-
+}
 </style>

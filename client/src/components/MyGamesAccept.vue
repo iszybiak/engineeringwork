@@ -1,6 +1,6 @@
 <template>
   <v-list-item-content class="button" v-if="squad.confirm == 0 && meet.meeting_date > currentDate " >
-    <v-list-item-content>
+    <v-list-item-content >
       <v-dialog
           v-model="dialog"
           width="500"
@@ -98,6 +98,7 @@ const props = defineProps({
   },
 })
 const squad = ref('')
+const friends = ref('')
 const meet = ref('')
 const currentDate = new Date().toISOString()
 onMounted(async () => {
@@ -107,6 +108,9 @@ onMounted(async () => {
   const response = await axios.get('api/listMeets/' + props.meetId)
   meet.value = response.data;
   console.log(meet.value.reserved[0])
+
+  const resp = await axios.get('api/listItems/' + props.friendId);
+  friends.value = resp.data
 })
 async function accept() {
     await axios.put('api/listMeets/squad/'+ props.meetId+ '/' + props.friendId, {
@@ -116,8 +120,15 @@ async function accept() {
   }
 
 async function dismiss() {
+
+  const refusal = friends.value.refusal + 1
+
   await axios.put('api/listMeets/squad/' + props.meetId+ '/' + props.friendId, {
     confirm: 2
+  });
+
+  await axios.put('api/listItems/' + props.friendId, {
+    refusal: refusal
   });
 
   await axios.put('api/listMeets/cancelled/' +  props.meetId, {
@@ -158,5 +169,11 @@ export default {
 .v-list-item__content{
   flex: 10%
 }
+@media only screen and (max-width: 785px) {
+  .button{
+    display: block;
+  }
+}
+
 
 </style>

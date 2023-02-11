@@ -9,12 +9,22 @@
         <v-list-item-content>
           <v-list-item-title >Imię Nazwisko</v-list-item-title>
         </v-list-item-content>
+        <div class="mobileNone">
         <v-list-item-content>
           <v-list-item-title >Ilość punktów</v-list-item-title>
         </v-list-item-content>
         <v-list-item-content>
-          <v-list-item-title >Ilość niesłowności</v-list-item-title>
+          <v-list-item-title >Ilość nieobecności</v-list-item-title>
         </v-list-item-content>
+        <v-list-item-content>
+          <v-list-item-title >Ilość odmów</v-list-item-title>
+        </v-list-item-content>
+        </div>
+        <div class="mob">
+          <v-list-item-avatar>Pkt</v-list-item-avatar>
+          <v-list-item-avatar>Nob.</v-list-item-avatar>
+          <v-list-item-avatar>Odm.</v-list-item-avatar>
+        </div>
       </v-list-item>
       <v-list-item
         v-for="(item, index) in filterData"
@@ -23,11 +33,12 @@
 
       >
         <v-list-item-avatar>{{index+1}}</v-list-item-avatar>
-        
+
         <v-list-item-content>
           <v-list-item-title >{{item.name + " " + item.surname}}</v-list-item-title>
         </v-list-item-content>
 
+        <div class="mobileNone">
         <v-list-item-content>
           <v-list-item-title >{{item.points}}</v-list-item-title>
         </v-list-item-content>
@@ -35,6 +46,16 @@
         <v-list-item-content>
           <v-list-item-title >{{item.behavior}}</v-list-item-title>
         </v-list-item-content>
+
+        <v-list-item-content>
+          <v-list-item-title >{{item.refusal}}</v-list-item-title>
+        </v-list-item-content>
+        </div>
+        <div class="mob">
+          <v-list-item-avatar>{{item.points}}</v-list-item-avatar>
+          <v-list-item-avatar>{{item.behavior}}</v-list-item-avatar>
+          <v-list-item-avatar>{{item.refusal}}</v-list-item-avatar>
+        </div>
 
       </v-list-item>
     </v-list>
@@ -59,4 +80,17 @@ import axios from "axios";
     }
   }
 </script>
+<style>
+@media only screen and (min-width: 586px) {
+  .mob {
+    display: none;
+  }
+}
+@media only screen and (max-width: 585px) {
+  .mobileNone{
+    display: none;
+  }
+}
 
+
+</style>

@@ -132,19 +132,21 @@
 
         <v-row>
           <v-col>
+            <p>Lista zawodników</p>
           <v-autocomplete
               v-model="friendsID"
               :rules="[rules.required]"
               :items = "fData"
               chips
-              label="Wybierz uczestników"
+              outlined
+              solo
+              label="Wybierz zawodników"
               item-value="id"
               multiple
               @change="limiteCategory"
             >
 
               <template v-slot:selection="data"
-
               >
                 <v-chip
                   v-bind="data.attrs"
@@ -188,12 +190,15 @@
         </v-row>
           <v-row>
             <v-col>
+              <p>Lista rezerwowa</p>
               <v-autocomplete
                   v-model="reserveID"
                   :rules="[rules.required]"
                   :items = "rData"
                   chips
-                  label="Lista rezerwowa"
+                  solo
+                  label="Wybierz zawodników rezerwowych"
+                  outlined
                   item-value="id"
                   multiple
                   @change="limiteCategory"
@@ -207,8 +212,7 @@
                       :input-value="data.selected"
                       close
                       @click="data.select"
-                      @click:close="remove(data.item)"
-
+                      @click:close="remove2(data.item)"
                   >
                     {{ data.item.name + " " + data.item.surname }}
                   </v-chip>
@@ -216,13 +220,12 @@
 
                 <template v-slot:item="data"
                 >
-                  <template v-if="typeof data.item !== 'object' ">
-                    <v-list-item-content v-text="data.item"
-
-                    >{{data.item}}</v-list-item-content>
+                  <template v-if="typeof data.item !== 'object'">
+                    <v-list-item-content v-text="data.item">
+                      {{data.item}}</v-list-item-content>
                   </template>
                   <template v-else>
-                    <v-list-item-content>
+                    <v-list-item-content >
                       <v-list-item-title>{{ data.item.name + " " + data.item.surname }}</v-list-item-title>
                       <v-list-item-subtitle v-if="data.item.level === 1">
                         {{ "Punkty  "+ data.item.points+ " | "}}  Amatorski
@@ -324,13 +327,13 @@ export default {
       return 0;
     });
 
-    for(const elem of sortMeet[0].friends){
-      const response = await axios.get('api/listItems/' + elem)
-      this.f = response.data;
-      predFriends.push(this.f)
+    if(predFriends.length == 0){
+      for(const elem of sortMeet[0].friends){
+        const response = await axios.get('api/listItems/' + elem)
+        this.f = response.data;
+        predFriends.push(this.f)
+      }
     }
-
-
   },
   methods: {
     async addItem(){
@@ -355,8 +358,12 @@ export default {
       window.location.reload();
     },
     remove (item) {
-      const index = this.items.indexOf(item.id)
-      if (index >= 0) this.items.splice(index, 1)
+      const index = this.friendsID.findIndex(elem => elem._id === item._id)
+      if (index >= 0) {this.friendsID.splice(index, 1)}
+    },
+    remove2 (item) {
+      const index = this.reserveID.findIndex(elem => elem._id === item._id)
+      if (index >= 0) {this.this.reserveID.splice(index, 1)}
     },
     limiteCategory() {
       if (this.friendsID.length > 12)  this.friendsID.pop()
@@ -369,6 +376,7 @@ export default {
     rData: function () {
       return this.fData.filter(o => !this.friendsID.map(op => op._id).includes(o._id))
     },
-  },
+  }
 }
 </script>
+

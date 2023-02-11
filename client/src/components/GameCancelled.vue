@@ -15,7 +15,7 @@
           {{data.name +" "+ data.surname}}
         </v-col>
         <v-col class="font-weight-bold grey--text ml-8">Anulowany</v-col>
-        <v-col></v-col>
+        <v-col class="mobile"></v-col>
       </v-row>
     </div>
   </v-expansion-panel-content>
@@ -55,6 +55,12 @@ onMounted(async () => {
 .red-text{
   color: #a94839;
   font-weight: bold;
+}
+
+@media only screen and (max-width: 585px){
+  .mobile{
+    display: none;
+  }
 }
 </style>
 

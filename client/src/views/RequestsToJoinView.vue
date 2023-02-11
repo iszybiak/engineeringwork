@@ -11,12 +11,9 @@
           :key="item._id"
           v-if="item.role == 'ROLE_BASIC'"
       >
-        <v-list-item-avatar></v-list-item-avatar>
-
         <v-list-item-content>
           <v-list-item-title >{{ item.name + " " + item.surname}}</v-list-item-title>
         </v-list-item-content>
-
         <v-list-item-content>
           <v-btn
               color="blue accent-3" dark

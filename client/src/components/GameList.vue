@@ -3,9 +3,10 @@
     <v-row justify="center">
       <v-expansion-panels inset>
         <v-expansion-panel
-            v-for="meet in filterData"
-            :key="meet._id"
-        >
+            v-for="(meet, index) in filterData"
+            :key="index"
+            :value="index === openedIndex"
+            @click="onExpansionPanelClick(index)">
 
           <v-expansion-panel-header  class="title" v-if="meet.meeting_date > currentDate" >
               <span >
@@ -43,12 +44,13 @@
             </v-row>
           </v-expansion-panel-content>
           <GameFriends
-              v-for="friend in meet.friends"
+              v-for="(friend, index) in meet.friends"
               :key="friend"
               :meetId="meet._id"
               :friend="friend"
               :cancelled:="meet.cancelled"
-          >
+              >
+
           </GameFriends>
           <v-expansion-panel-content v-if="meet.meeting_date > currentDate && meet.friends.length < 12">
             <v-dialog
@@ -287,10 +289,14 @@ export default {
       loading2: false,
       dialog2:false,
       dialog3:false,
+      openedIndex: Number(localStorage.getItem('openedIndex')) || 0,
       currentDate: new Date().toISOString()
     };
   },
   async mounted(){
+   // this.openedIndex = Number(localStorage.getItem('openedIndex')) || 0;
+
+
     const res = await axios.get('api/listMeets/maker/' + currentEmail)
     this.itemsMeet = res.data;
 
@@ -343,6 +349,17 @@ export default {
 
   },
   methods: {
+    onExpansionPanelClick(index) {
+      // if(event.currentTarget.classList.contains('v-expansion-panel-header--active')) {
+      //   console.log("Panel is closing/now closed.")
+      // } else {
+      //   console.log("Panel is opening/now open.")
+      // }
+      console.log(index)
+      this.openedIndex = localStorage.setItem('openedIndex', index);
+      console.log(this.openedIndex)
+
+    },
     format_date(value){
       if (value) {
         return moment(String(value)).lang('PL').format(' dddd - '+'DD MMM ')
@@ -358,12 +375,15 @@ export default {
       const res = await axios.get('api/listMeets/' +id)
       this.meet = res.data;
 
+      const date = this.format_date(this.meet.meeting_date);
+      const time = this.format_time(this.meet.meeting_date);
+      const place = this.meet.place
+
       for (const elem of this.meet.friends) {
+        console.log(elem)
         const checkFriends = this.friend.filter((item) => item._id == elem)
 
-        const date = this.format_date(this.meet.meeting_date);
-        const time = this.format_time(this.meet.meeting_date);
-        const place = this.meet.place
+
 
         //Send Email
         await axios.post('api/listMeets/email-send', {
@@ -374,10 +394,17 @@ export default {
               " w miejscu " +place+ "zosłay ODWOŁANE."
         });
 
+        }
+
+      for (const elem of this.meet.friends) {
+        console.log(elem)
+
+        const checkFriends = this.friend.filter((item) => item._id == elem)
+
         //Send SMS
         // await axios.post('api/listMeets/sms', {
-        //   to: this.friend.number,
-        //   text: this.friend.name +"! Bardzo nam przykro. Zajęcia z dnia "
+        //   to: checkFriends[0].number,
+        //   text: checkFriends[0].name +"! Bardzo nam przykro. Zajęcia z dnia "
         //       +date+" o godzinie "+ time+" w miejscu "+place+ "zostały ODWOŁANE."
         // });
         }
@@ -387,12 +414,12 @@ export default {
       const res = await axios.get('api/listMeets/' +id)
       this.meet = res.data;
 
-      for (const elem of this.meet.friends) {
-          const checkFriends = this.friend.filter((item) => item._id == elem)
-          const date = this.format_date(this.meet.meeting_date);
-          const time = this.format_time(this.meet.meeting_date);
-          const place = this.meet.place
+      const date = this.format_date(this.meet.meeting_date);
+      const time = this.format_time(this.meet.meeting_date);
+      const place = this.meet.place
 
+      for (const elem of this.meet.friends) {
+        const checkFriends = this.friend.filter((item) => item._id == elem)
         await axios.post('api/listMeets/email-send', {
           to: checkFriends[0].email,
           subject: "Siatkówka - "+date+" - godz. - "+time+" - "+place,
@@ -400,6 +427,10 @@ export default {
               time+". Miejsce - "+place +
               "Potwierdź swoją obecność lub nieobecność tu: http://localhost:8080/userGames"
         });
+        console.log(checkFriends[0].email)
+      }
+        for (const elem of this.meet.friends) {
+          const checkFriends = this.friend.filter((item) => item._id == elem)
         await axios.post('api/listMeets/sms', {
           to: checkFriends[0].number,
           text: "Cześć "+checkFriends[0].name +" ! Zapraszam Cię do wspólnej gry "+date+" o godzinie "+
@@ -423,6 +454,10 @@ export default {
     filterByPeriodicity: function (){
       return this.itemsMeet.filter( o => o.periodicity === true )
     },
+  },
+  created() {
+    this.openedIndex = Number(localStorage.getItem('openedIndex')) || 0;
+    console.log(this.openedIndex);
   },
   watch: {
     dialog(val) {
@@ -454,5 +489,11 @@ export default {
 }
 .archived{
   background-color: #9a9a9a;
+}
+
+@media only screen and (max-width: 585px) {
+  .edit-col{
+    display: none;
+  }
 }
 </style>

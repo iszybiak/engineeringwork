@@ -18,8 +18,8 @@ const User = new Schema({
         required: true,
     },
     points: {
-        type: Number,
-        default: 0,
+        type: String,
+        default: "0",
     },
     date: {
         type: Date,
@@ -38,6 +38,10 @@ const User = new Schema({
         default: 1
     },
     behavior: {
+        type: Number,
+        default: 0
+    },
+    refusal: {
         type: Number,
         default: 0
     }

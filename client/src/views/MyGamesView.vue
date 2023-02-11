@@ -13,20 +13,20 @@
             <v-list-item-title >
               <span class="title">
               Spotkanie
-              <b>{{format_date(meet.meeting_date) }}</b> godz. <b>{{format_time(meet.meeting_date)}}</b>
+              <b>{{format_date(meet.meeting_date) }}</b>  <b>godz. {{format_time(meet.meeting_date)}}</b>
               </span>
             </v-list-item-title>
             <v-list-item-subtitle v-if="meet.level === 1">
-              {{meet.place}} | {{meet.price}} zł | Amatorski
+              {{meet.place}} | {{meet.price}} zł |<span> Amatorski</span>
             </v-list-item-subtitle>
             <v-list-item-subtitle v-if="meet.level === 2">
-              {{meet.place}} | {{meet.price}} zł | Rekreacyjny
+              {{meet.place}} | {{meet.price}} zł | <span>Rekreacyjny </span>
             </v-list-item-subtitle>
             <v-list-item-subtitle v-if="meet.level === 3">
-            {{meet.place}} | {{meet.price}} zł | Średnio-zaawansowany
+            {{meet.place}} | {{meet.price}} zł | <span>Średnio-zaawansowany</span>
             </v-list-item-subtitle>
             <v-list-item-subtitle v-if="meet.level === 4">
-              {{meet.place}} | {{meet.price}} zł | Zaawansowany
+              {{meet.place}} | {{meet.price}} zł | <span>Zaawansowany</span>
             </v-list-item-subtitle>
             </v-list-item-content>
           <my-games-accept :meetId="meet._id" :friendId="item._id" />
@@ -85,3 +85,14 @@ export default {
   }
 }
 </script>
+<style>
+@media only screen and (max-width: 785px) {
+  b{
+    display: block;
+  }
+  span{
+    display: block;
+  }
+}
+
+</style>
