@@ -9,17 +9,15 @@
         <v-list-item-content>
           <v-list-item-title >Imię Nazwisko</v-list-item-title>
         </v-list-item-content>
-        <div class="mobileNone">
-        <v-list-item-content>
+        <v-list-item-content class="mobileNone">
           <v-list-item-title >Ilość punktów</v-list-item-title>
-        </v-list-item-content>
-        <v-list-item-content>
+        </v-list-item-content >
+        <v-list-item-content class="mobileNone">
           <v-list-item-title >Ilość nieobecności</v-list-item-title>
         </v-list-item-content>
-        <v-list-item-content>
+        <v-list-item-content class="mobileNone">
           <v-list-item-title >Ilość odmów</v-list-item-title>
         </v-list-item-content>
-        </div>
         <div class="mob">
           <v-list-item-avatar>Pkt</v-list-item-avatar>
           <v-list-item-avatar>Nob.</v-list-item-avatar>
@@ -38,19 +36,18 @@
           <v-list-item-title >{{item.name + " " + item.surname}}</v-list-item-title>
         </v-list-item-content>
 
-        <div class="mobileNone">
-        <v-list-item-content>
+        <v-list-item-content class="mobileNone">
           <v-list-item-title >{{item.points}}</v-list-item-title>
         </v-list-item-content>
 
-        <v-list-item-content>
+        <v-list-item-content class="mobileNone">
           <v-list-item-title >{{item.behavior}}</v-list-item-title>
         </v-list-item-content>
 
-        <v-list-item-content>
+        <v-list-item-content class="mobileNone">
           <v-list-item-title >{{item.refusal}}</v-list-item-title>
         </v-list-item-content>
-        </div>
+
         <div class="mob">
           <v-list-item-avatar>{{item.points}}</v-list-item-avatar>
           <v-list-item-avatar>{{item.behavior}}</v-list-item-avatar>
